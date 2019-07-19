@@ -1,6 +1,8 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
-.sharePointSiteRequestForm {
+@import "~@material/button/dist/mdc.button.css";
+
+.oneDriveForm {
   .container {
     max-width: 700px;
     margin: 0px auto;
@@ -12,6 +14,7 @@
     @include ms-fontColor-white;
     background-color: $ms-color-themeDark;
     padding: 20px;
+    min-height: 320px;
   }
 
   .column {
@@ -71,4 +74,19 @@
       display: inline-block;
     }
   }
+
+  .loader {
+    width: 100px;
+    margin: 0 auto;
+
+    & svg {
+      margin: 0 auto;
+    }
+  }
 }
+
+// Material.io stuff starts
+// .foo-button {
+//   @include mdc-button-ink-color(teal);
+//   @include mdc-states(teal);
+// }
