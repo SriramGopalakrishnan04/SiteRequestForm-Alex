@@ -56,7 +56,7 @@ class TextFields extends React.Component {
           className={classes.textField}
           placeholder={"E.G. IS Web Content Management"}
           margin="normal"
-          variant="filled"
+          variant="outlined"
         />
 
         <TextField
@@ -67,7 +67,7 @@ class TextFields extends React.Component {
           className={classes.textField}
           placeholder="E.G. p123456 or Smith,John"
           margin="normal"
-          variant="filled"
+          variant="outlined"
         />
         <TextField
           required
@@ -76,7 +76,7 @@ class TextFields extends React.Component {
           className={classes.textField}
           placeholder="E.G. p123456 or Smith,John"
           margin="normal"
-          variant="filled"
+          variant="outlined"
         />
         <TextField
           id="other-owners"
