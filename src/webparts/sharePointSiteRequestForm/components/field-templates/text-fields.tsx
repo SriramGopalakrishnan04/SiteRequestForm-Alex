@@ -50,6 +50,7 @@ class TextFields extends React.Component {
       <form className={classes.container} noValidate autoComplete="off">
         <TextField
           required
+          multiline
           color="primary"
           id="team-name"
           label="Team Name"
@@ -61,6 +62,7 @@ class TextFields extends React.Component {
 
         <TextField
           required
+          multiline
           id="primary-owner"
           label="Primary Owner"
           // defaultValue=""
@@ -77,6 +79,7 @@ class TextFields extends React.Component {
           placeholder="E.G. p123456 or Smith,John"
           margin="normal"
           variant="outlined"
+          multiline
         />
         <TextField
           id="other-owners"

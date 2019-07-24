@@ -32,7 +32,6 @@ const blueTheme = createMuiTheme({
 });
 
 
-export interface Props extends WithStyles<typeof muiStyles> { }
 
 const muiStyles = theme => createStyles({
   container: {
@@ -52,6 +51,7 @@ const muiStyles = theme => createStyles({
   },
 });
 
+export interface Props extends WithStyles<typeof muiStyles> { }
 
 const initialState = {
   userId: null,
