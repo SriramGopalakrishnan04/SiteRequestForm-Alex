@@ -1,7 +1,21 @@
 import * as React from 'react';
 
 import Loader from 'react-loader-spinner';
-import ButtonTemplate from './field-templates/button';
+
+import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
+
+
+import { MuiThemeProvider, createMuiTheme, withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
+// import indigo from '@material-ui/core/colors/indigo';
+// import red from '@material-ui/core/colors/red';
+import blue from '@material-ui/core/colors/blue';
+// import green from '@material-ui/core/colors/green';
+import yellow from '@material-ui/core/colors/yellow';
+
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+
+import TextFieldsTemplate from './field-templates/text-fields';
 
 import styles from './SharePointSiteRequestForm.module.scss';
 import { ISharePointSiteRequestFormProps } from './ISharePointSiteRequestFormProps';
@@ -9,16 +23,44 @@ import { ISharePointSiteRequestFormProps } from './ISharePointSiteRequestFormPro
 import { getCurrentUserLookupId, getListItemsByUserId, createOneDriveMigrationRequest, getListItemEntityTypeName } from '../services/sp-rest';
 
 
+const blueTheme = createMuiTheme({
+  palette: {
+    primary: blue,
+    secondary: yellow,
+    type: "dark"
+  },
+});
+
+
+export interface Props extends WithStyles<typeof muiStyles> { }
+
+const muiStyles = theme => createStyles({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    // width: 200,
+  },
+  dense: {
+    marginTop: 19,
+  },
+  menu: {
+    width: 200,
+  },
+});
+
 
 const initialState = {
   userId: null,
-  alreadySubmitted: false,
   finishedSubmitting: false,
   buttonDisabled: true,
-  isLoading: true,
   isLoadingTypeName: true,
   typeName: '',
-  didError: false
+  didError: false,
+  formData: {}
 };
 
 type State = Readonly<typeof initialState>;
@@ -27,62 +69,24 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   public readonly state: State = initialState;
   private listItemEntityTypeName: string;
 
+  private _getPeoplePickerItems(items: any[]) {
+    console.log('Items:', items);
+  }
 
-  // private checkIfSubmitted() {
-  //   getListItemsByUserId(this.props.webpartContext, this.state.userId).then((response) => {
-
-  //     response.json().then(responseJSON => {
-  //       if (responseJSON.value.length > 0) {
-  //         // If items return, then the user has already submitted.
-  //         this.setState({
-  //           isLoading: false,
-  //           alreadySubmitted: true
-  //         });
-  //       } else {
-  //         // If no items return, the user has not submitted yet.
-  //         this.setState({
-  //           isLoading: false,
-  //           buttonDisabled: false
-  //         });
-  //       }
-  //     }).catch(error => {
-  //       // Not sure why this would ever error, but handling it just in case.
-  //       this.setState({
-  //         didError: true
-  //       });
-  //     });
-  //   }).catch(error => {
-  //     // Handle failed calls. E.G. The list cannot be found or the user does not have access to the list.
-  //     this.setState({
-  //       didError: true
-  //     });
-  //   });
-  // }
+  public handleTextChange(fieldName: string, fieldValue: string) {
+    this.setState({
+      formData: { ...this.state.formData, [fieldName]: fieldValue }
+    })
+  }
 
   // Handle some setup after the component mounts
   public componentDidMount() {
-    
-    // Get the current user lookup ID
-    getCurrentUserLookupId(this.props.webpartContext.pageContext.user.loginName, this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient)
-      .then(result => {
-        result.json().then(rJson => {
-          this.setState({
-            userId: rJson.Id
-          });
 
-          // after setting the user's ID, check if they have already submitted the form.
-          // this.checkIfSubmitted();
-        });
-      })
-      .catch(error => {
-        // handle if we cannot get the user's ID.
-        this.setState({
-          didError: true
-        });
-      });
 
-      getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient).then(response => {
-        
+
+    getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient)
+      .then(response => {
+
         if (response.ok) {
           response.json().then(rJson => {
             this.setState({
@@ -121,30 +125,14 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   }
 
   public render(): React.ReactElement<ISharePointSiteRequestFormProps> {
-
+    // if (this.state.isLoadingTypeName) {
     if (false) {
-      // if (this.state.didError) {
       return (
         <div className={styles.oneDriveForm}>
           <div className={styles.container}>
             <div className={styles.row}>
               <div className={styles.column}>
-                <span className={styles.title}>One Drive Migration Form</span>
-                {/* <p className={styles.subTitle}>Subtitle goes here.</p> */}
-                <p className={styles.description}>An error occurred. Please contact the WCM Team.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    } else if (false) {
-    // } else if (this.state.isLoading || this.state.isLoadingTypeName) {
-      return (
-        <div className={styles.oneDriveForm}>
-          <div className={styles.container}>
-            <div className={styles.row}>
-              <div className={styles.column}>
-                <span className={styles.title}>One Drive Migration Form</span>
+                <span className={styles.title}>SharePoint Team Site Request</span>
                 {/* <p className={styles.subTitle}>Subtitle goes here.</p> */}
                 <p className={styles.description}></p>
               </div>
@@ -160,53 +148,45 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
           </div>
         </div>
       );
-    } else if (false) {
-    // } else if (this.state.alreadySubmitted) {
-      return (
-        <div className={styles.oneDriveForm}>
-          <div className={styles.container}>
-            <div className={styles.row}>
-              <div className={styles.column}>
-                <span className={styles.title}>One Drive Migration Form</span>
-                {/* <p className={styles.subTitle}>Subtitle goes here.</p> */}
-                <p className={styles.description}>You have already submitted the request.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    } else if (false) {
-    // } else if (this.state.finishedSubmitting) {
-      return (
-        <div className={styles.oneDriveForm}>
-          <div className={styles.container}>
-            <div className={styles.row}>
-              <div className={styles.column}>
-                <span className={styles.title}>One Drive Migration Form</span>
-                {/* <p className={styles.subTitle}>Subtitle goes here.</p> */}
-                <p className={styles.description}>Your request was successfully submitted.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
     } else {
+      console.log(blueTheme);
       return (
-        <div className={styles.oneDriveForm}>
-          <div className={styles.container}>
-            <div className={styles.row}>
-              <div className={styles.column}>
-                <span className={styles.title}>One Drive Migration Form</span>
-                {/* <p className={styles.subTitle}>Subtitle goes here.</p> */}
-                <p className={styles.description}>Click the button if you are ready to have your OneDrive content moved. This will create a request that will be process in the near future.</p>
-                <button disabled={this.state.buttonDisabled} onClick={() => { this.handleRequestButtonClick(); }} className={styles.button}>
-                  <span className={styles.label}>Request OneDrive Migration</span>
-                  <ButtonTemplate />
-                </button>
+        <MuiThemeProvider theme={blueTheme}>
+          {/* <div> */}
+          <div className={styles.oneDriveForm}>
+            {/* <div> */}
+            <div className={styles.container}>
+              {/* <div> */}
+              <div className={styles.row}>
+                {/* <div> */}
+                <div className={styles.column}>
+                  <span className={styles.title}>SharePoint Team Site Request</span>
+
+                  <p className={styles.description}>This is some info about sharepoint team sites.</p>
+
+
+                  <TextFieldsTemplate />
+                  {/* <TextFieldsTemplate changeHandler={this.handleTextChange} /> */}
+                  <PeoplePicker
+                    context={this.props.webpartContext}
+                    titleText="People Picker"
+                    personSelectionLimit={3}
+                    // groupName={"Team Site Owners"} // Leave this blank in case you want to filter from all users
+                    showtooltip={true}
+                    isRequired={true}
+                    disabled={false}
+                    selectedItems={this._getPeoplePickerItems}
+                    showHiddenInUI={false}
+                    principalTypes={[PrincipalType.User]}
+                    resolveDelay={1000} />
+                  <br/>
+                  <Button variant="outlined" color="primary">Submit</Button>
+                  <Button color="secondary">Submit Request</Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </MuiThemeProvider>
       );
     }
   }

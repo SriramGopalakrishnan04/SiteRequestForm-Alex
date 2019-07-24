@@ -13,6 +13,7 @@
   },
   "externals": {},
   "localizedResources": {
-    "SharePointSiteRequestFormWebPartStrings": "lib/webparts/sharePointSiteRequestForm/loc/{locale}.js"
+    "SharePointSiteRequestFormWebPartStrings": "lib/webparts/sharePointSiteRequestForm/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
   }
 }
