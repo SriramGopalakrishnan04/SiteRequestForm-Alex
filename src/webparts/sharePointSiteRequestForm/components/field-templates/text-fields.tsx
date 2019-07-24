@@ -5,7 +5,6 @@ import { withStyles, WithStyles, createStyles, withTheme } from '@material-ui/co
 // import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 
-export interface Props extends WithStyles<typeof styles> { }
 
 const styles = theme => createStyles({
   container: {
@@ -26,22 +25,24 @@ const styles = theme => createStyles({
   },
 });
 
+export interface Props extends WithStyles<typeof styles> { }
+
 // function TextFields(props: Props) {
 class TextFields extends React.Component {
   // class TextFields extends React.Component<{changeHandler: Function}> {
-  state = {
-    name: 'Cat in the Hat',
-    age: '',
-    multiline: 'Controlled',
-    currency: 'EUR',
-  };
+  // state = {
+  //   name: 'Cat in the Hat',
+  //   age: '',
+  //   multiline: 'Controlled',
+  //   currency: 'EUR',
+  // };
 
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.value });
-  };
-  static propTypes: { classes: PropTypes.Validator<object>; };
+  // handleChange = name => event => {
+  //   this.setState({ [name]: event.target.value });
+  // };
+  public static propTypes: { classes: PropTypes.Validator<object>; };
 
-  render() {
+  public render() {
     // const { classes } = this.props;
     const classes = this.props['classes'];
 

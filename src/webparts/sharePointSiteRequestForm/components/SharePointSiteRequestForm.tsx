@@ -76,7 +76,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   public handleTextChange(fieldName: string, fieldValue: string) {
     this.setState({
       formData: { ...this.state.formData, [fieldName]: fieldValue }
-    })
+    });
   }
 
   // Handle some setup after the component mounts
