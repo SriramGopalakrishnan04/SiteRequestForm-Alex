@@ -15,16 +15,20 @@ export interface ISharePointSiteRequestFormWebPartProps {
   description: string;
 }
 
+// const build = require("@microsoft/sp-build-web");
+
 export default class SharePointSiteRequestFormWebPart extends BaseClientSideWebPart<ISharePointSiteRequestFormWebPartProps> {
 
   public render(): void {
     const element: React.ReactElement<ISharePointSiteRequestFormProps > = React.createElement(
       SharePointSiteRequestForm,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        webpartContext: this.context
       }
     );
-
+    // alert("BUILD")
+    //   window['build'] = build;
     ReactDom.render(element, this.domElement);
   }
 
