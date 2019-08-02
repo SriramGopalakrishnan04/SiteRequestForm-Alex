@@ -1,26 +1,26 @@
 import * as React from 'react';
 
-import Loader from 'react-loader-spinner';
-
-import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
-
-
-import { MuiThemeProvider, createMuiTheme, withStyles, WithStyles, createStyles } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme, withStyles, WithStyles, createStyles, createGenerateClassName } from '@material-ui/core/styles';
 // import indigo from '@material-ui/core/colors/indigo';
 // import red from '@material-ui/core/colors/red';
 import blue from '@material-ui/core/colors/blue';
 // import green from '@material-ui/core/colors/green';
 import yellow from '@material-ui/core/colors/yellow';
 
+
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 import TextFieldsTemplate from './field-templates/text-fields';
+import PeoplePickerControl from './field-templates/people-picker';
 
 import styles from './SharePointSiteRequestForm.module.scss';
 import { ISharePointSiteRequestFormProps } from './ISharePointSiteRequestFormProps';
 
 import { getCurrentUserLookupId, getListItemsByUserId, createOneDriveMigrationRequest, getListItemEntityTypeName } from '../services/sp-rest';
+
+import { SPHttpClient, SPHttpClientResponse, SPHttpClientConfiguration } from '@microsoft/sp-http';  
+
 
 
 const blueTheme = createMuiTheme({
@@ -51,6 +51,30 @@ const muiStyles = theme => createStyles({
   },
 });
 
+window["muiStyles"] = muiStyles;
+window["blueTheme"] = blueTheme;
+window["CreateGenerateClassName"] = createGenerateClassName;
+
+
+// const styles = theme => createStyles({
+//   container: {
+//     display: 'flex',
+//     flexWrap: 'wrap'
+//   },
+//   textField: {
+//     marginLeft: theme.spacing.unit,
+//     marginRight: theme.spacing.unit,
+//     width: "80%",
+//     minWidth: 200
+//   },
+//   dense: {
+//     marginTop: 19,
+//   },
+//   menu: {
+//     width: 200,
+//   },
+// });
+
 export interface Props extends WithStyles<typeof muiStyles> { }
 
 const initialState = {
@@ -73,6 +97,8 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     console.log('Items:', items);
   }
 
+  // private StyledTextFieldsTemplate = withStyles(muiStyles)(React.createElement(TextFieldsTemplate, {context: this.props.webpartContext}))
+
   public handleTextChange(fieldName: string, fieldValue: string) {
     this.setState({
       formData: { ...this.state.formData, [fieldName]: fieldValue }
@@ -82,7 +108,8 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   // Handle some setup after the component mounts
   public componentDidMount() {
 
-
+    window['spfx-site-request-context'] = this.props.webpartContext;
+    window['spfx-httpContext'] = SPHttpClient;
 
     getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient)
       .then(response => {
@@ -126,30 +153,6 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
   public render(): React.ReactElement<ISharePointSiteRequestFormProps> {
     // if (this.state.isLoadingTypeName) {
-    if (false) {
-      return (
-        <div className={styles.oneDriveForm}>
-          <div className={styles.container}>
-            <div className={styles.row}>
-              <div className={styles.column}>
-                <span className={styles.title}>SharePoint Team Site Request</span>
-                {/* <p className={styles.subTitle}>Subtitle goes here.</p> */}
-                <p className={styles.description}></p>
-              </div>
-              <div className={styles.loader}>
-                <Loader className={styles.loader}
-                  type="Oval"
-                  color="#00BFFF"
-                  height="100"
-                  width="100"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      console.log(blueTheme);
       return (
         <MuiThemeProvider theme={blueTheme}>
           {/* <div> */}
@@ -165,20 +168,11 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
                   <p className={styles.description}>This is some info about sharepoint team sites.</p>
 
 
-                  <TextFieldsTemplate />
+                  {/* <StyledTextFieldsTemplate /> */}
+                  <TextFieldsTemplate context={this.props.webpartContext} />
                   {/* <TextFieldsTemplate changeHandler={this.handleTextChange} /> */}
-                  <PeoplePicker
-                    context={this.props.webpartContext}
-                    titleText="People Picker"
-                    personSelectionLimit={3}
-                    // groupName={"Team Site Owners"} // Leave this blank in case you want to filter from all users
-                    showtooltip={true}
-                    isRequired={true}
-                    disabled={false}
-                    selectedItems={this._getPeoplePickerItems}
-                    showHiddenInUI={false}
-                    principalTypes={[PrincipalType.User]}
-                    resolveDelay={1000} />
+                  <PeoplePickerControl />
+                  {/* <PeoplePickerControl context={this.props.webpartContext} /> */}
                   <br/>
                   <Button variant="outlined" color="primary">Submit</Button>
                   <Button color="secondary">Submit Request</Button>
@@ -188,6 +182,6 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
           </div>
         </MuiThemeProvider>
       );
-    }
+    
   }
 }
