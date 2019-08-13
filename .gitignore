@@ -9,7 +9,9 @@ node_modules
 # Build generated files
 dist
 lib
-sharepoint/solution/debug/
+!src/**/lib
+#ignore the debug folder but not the packaged file
+sharepoint/solution/debug
 temp
 # *.sppkg
 
