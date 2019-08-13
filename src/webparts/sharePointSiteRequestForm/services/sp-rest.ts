@@ -1,10 +1,8 @@
 import { SPHttpClient, SPHttpClientResponse, ISPHttpClientOptions } from '@microsoft/sp-http';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
+import { sp } from '@pnp/sp';
 
-// This is the list in which we will hold OneDrive migration requests
-const listName = "One Drive Migration";
-
-function getListItemsByUserId(webPartContext: WebPartContext, userId: string): Promise<SPHttpClientResponse> {
+function getListItemsByUserId(webPartContext: WebPartContext, userId: string, listName: string): Promise<SPHttpClientResponse> {
     // Create the CAML query
     const queryText: string = `<View>
                                     <Query>
@@ -48,40 +46,66 @@ function getListItemsByUserId(webPartContext: WebPartContext, userId: string): P
     });
 }
 
-function createOneDriveMigrationRequest(webPartContext: WebPartContext, userId: string, typeName: string): Promise<SPHttpClientResponse> {
-    let userLogin = webPartContext.pageContext.user.loginName.replace('i:0#.f|membership|', '').split("@")[0];
-
-
-    const body: string = JSON.stringify({
-        '__metadata': {
-            'type': typeName
-        },
-        'Title': `${webPartContext.pageContext.user.displayName}`,
-        'PorJNumber': userLogin
+function createSiteRequest(webPartContext: WebPartContext, formData: any, listName: string, typeName: string): Promise<any> {
+    sp.setup({
+        spfxContext: webPartContext
     });
-
-    let requestUrl = webPartContext.pageContext.web.absoluteUrl.concat(`/_api/web/Lists/GetByTitle('${listName}')/items`);
-
-    return new Promise((res, rej) => {
-        webPartContext.spHttpClient.post(requestUrl,
-            SPHttpClient.configurations.v1,
+    
+    return new Promise((resolve, reject) => {
+        sp.web.lists.getByTitle(listName).items.add({
+            Title: formData['Title']
+        }).then(res => {
+            res.item.validateUpdateListItem([{
+                FieldName: "PrimaryOwner",
+                FieldValue: JSON.stringify([{ "Key": formData['PrimaryOwner'][0].Key }]),
+            },
             {
-                headers: {
-                    'Accept': 'application/json;odata=nometadata',
-                    'Content-type': 'application/json;odata=verbose',
-                    'odata-version': ''
-                },
-                body: body
-            }).then((result) => {
-                result.json().then(val => {
-                    res(val);
-                });
-            }, (error) => {
-                error.json().then(val => {
-                    rej(val);
-                });
+                FieldName: "SecondaryOwner",
+                FieldValue: JSON.stringify([{ "Key": formData['SecondaryOwner'][0].Key }]),
+            },
+            {
+                FieldName: "AdditionalOwners",
+                FieldValue: JSON.stringify(formData['AdditionalOwners'].map(item => { return { "Key": item.Key };})),
+            },
+            {
+                FieldName: "Members",                
+                FieldValue: JSON.stringify(formData['Members'].map(item => { return { "Key": item.Key };})),
+
+            }]).then(updateRes => {
+                resolve("DONE");
             });
+        });
     });
+    
+    // const body: string = JSON.stringify({
+    //     '__metadata': {
+    //         'type': typeName
+    //     },
+    //     ...formData
+    // });
+
+    // let requestUrl = webPartContext.pageContext.web.absoluteUrl.concat(`/_api/web/Lists/GetByTitle('${listName}')/items`);
+
+    // return new Promise((res, rej) => {
+    //     webPartContext.spHttpClient.post(requestUrl,
+    //         SPHttpClient.configurations.v1,
+    //         {
+    //             headers: {
+    //                 'Accept': 'application/json;odata=nometadata',
+    //                 'Content-type': 'application/json;odata=verbose',
+    //                 'odata-version': ''
+    //             },
+    //             body: body
+    //         }).then((result) => {
+    //             result.json().then(val => {
+    //                 res(val);
+    //             });
+    //         }, (error) => {
+    //             error.json().then(val => {
+    //                 rej(val);
+    //             });
+    //         });
+    // });
 }
 
 function getCurrentUserLookupId(userLogin: string, siteUrl: string, spHttpClient: SPHttpClient): Promise<SPHttpClientResponse> {
@@ -112,7 +136,7 @@ function getCurrentUserLookupId(userLogin: string, siteUrl: string, spHttpClient
 }
 
 
-function getListItemEntityTypeName(siteUrl: string, spHttpClient: SPHttpClient): Promise<SPHttpClientResponse> {
+function getListItemEntityTypeName(siteUrl: string, spHttpClient: SPHttpClient, listName: string): Promise<SPHttpClientResponse> {
     return new Promise<SPHttpClientResponse>((resolve, reject) => {
     //   if (this.listItemEntityTypeName) {
     //     resolve(this.listItemEntityTypeName);
@@ -138,7 +162,7 @@ function getListItemEntityTypeName(siteUrl: string, spHttpClient: SPHttpClient):
 
 export {
     getListItemsByUserId,
-    createOneDriveMigrationRequest,
+    createSiteRequest,
     getCurrentUserLookupId,
     getListItemEntityTypeName
 };

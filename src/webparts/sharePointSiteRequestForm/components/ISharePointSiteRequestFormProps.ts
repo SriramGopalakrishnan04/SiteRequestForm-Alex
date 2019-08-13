@@ -1,6 +1,6 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 
 export interface ISharePointSiteRequestFormProps {
-  description: string;
+  listName: string;
   webpartContext: WebPartContext;
 }
