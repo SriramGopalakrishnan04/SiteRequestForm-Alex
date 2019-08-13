@@ -1,6 +1,6 @@
 {
   "name": "spfx-site-request-form",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "private": true,
   "engines": {
     "node": ">=0.10.0"

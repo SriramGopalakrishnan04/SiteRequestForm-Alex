@@ -8,6 +8,12 @@ const textFieldCss = {
     marginRight: '8px'
 };
 
+const textFieldInputStyles = {
+    color: 'inherit',
+    'background-color': 'rgba(0,0,0,0)',
+    'border-color': 'inherit'
+};
+
 interface TextFieldTemplateProps {
     label: string;
     placeHolder: string;
@@ -45,6 +51,8 @@ class TextFieldTemplate extends React.Component<TextFieldTemplateProps> {
 
         return (
             <TextField
+                // This is whack but you have to specify inputProps inside of inputProps to affect the actual 'input'
+                InputProps={{inputProps: {style: textFieldInputStyles}}}
                 error={errorState}
                 required={this.props.required}
                 multiline={this.props.multiline}
