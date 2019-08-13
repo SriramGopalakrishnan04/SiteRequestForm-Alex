@@ -10,7 +10,7 @@ const textFieldCss = {
 
 const textFieldInputStyles = {
     color: 'inherit',
-    'background-color': 'inherit',
+    'background-color': 'rgba(0,0,0,0)',
     'border-color': 'inherit'
 };
 
