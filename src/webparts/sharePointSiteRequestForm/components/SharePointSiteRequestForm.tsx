@@ -11,15 +11,16 @@ import yellow from '@material-ui/core/colors/yellow';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-import TextFieldsTemplate from './field-templates/text-fields';
-import PeoplePickerControl from './field-templates/people-picker';
+import TextFieldTemplate from './field-templates/text-field';
+
+import PeoplePickerTemplate from './field-templates/people-picker-template';
 
 import styles from './SharePointSiteRequestForm.module.scss';
 import { ISharePointSiteRequestFormProps } from './ISharePointSiteRequestFormProps';
 
-import { getCurrentUserLookupId, getListItemsByUserId, createOneDriveMigrationRequest, getListItemEntityTypeName } from '../services/sp-rest';
+import { getCurrentUserLookupId, getListItemsByUserId, createSiteRequest, getListItemEntityTypeName } from '../services/sp-rest';
 
-import { SPHttpClient, SPHttpClientResponse, SPHttpClientConfiguration } from '@microsoft/sp-http';  
+import { SPHttpClient, SPHttpClientResponse, SPHttpClientConfiguration } from '@microsoft/sp-http';
 
 
 
@@ -31,60 +32,50 @@ const blueTheme = createMuiTheme({
   },
 });
 
+// const getUsersArray = (users: { Description: string }[]) => {
+//   let userstr = "";
+//   for (let user in users) {
+    
+//     userstr += `##${user['Description']}`;
+//   }
 
+//   return userstr;
+// }
 
-const muiStyles = theme => createStyles({
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap'
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    // width: 200,
-  },
-  dense: {
-    marginTop: 19,
-  },
-  menu: {
-    width: 200,
-  },
-});
+const getItemDataForPost = (formData: any) => {
+  let itemData = {
+    Title: formData["Team Name"],
+    PrimaryOwner: formData["Primary Owner"],
+    SecondaryOwner: formData["Secondary Owner"],
+    AdditionalOwners: formData["Additional Owners"],
+    Members: formData["Members"]
+    // PrimaryOwner: getUsersArray(formData["Primary Owner"]),
+    // SecondaryOwner: getUsersArray(formData["Secondary Owner"])
+  };
 
-window["muiStyles"] = muiStyles;
-window["blueTheme"] = blueTheme;
-window["CreateGenerateClassName"] = createGenerateClassName;
+  return itemData;
+};
 
-
-// const styles = theme => createStyles({
-//   container: {
-//     display: 'flex',
-//     flexWrap: 'wrap'
-//   },
-//   textField: {
-//     marginLeft: theme.spacing.unit,
-//     marginRight: theme.spacing.unit,
-//     width: "80%",
-//     minWidth: 200
-//   },
-//   dense: {
-//     marginTop: 19,
-//   },
-//   menu: {
-//     width: 200,
-//   },
-// });
-
-export interface Props extends WithStyles<typeof muiStyles> { }
+const containerCss = {
+  display: 'flex',
+  flexWrap: 'wrap'
+} as React.CSSProperties;
 
 const initialState = {
   userId: null,
-  finishedSubmitting: false,
+  isSubmitted: false,
   buttonDisabled: true,
   isLoadingTypeName: true,
   typeName: '',
-  didError: false,
-  formData: {}
+  isValidForm: false,
+  errorMessage: "Please provide a value for all required fields.",
+  formData: {
+    "Team Name": "",
+    "Primary Owner": [],
+    "Secondary Owner": [],
+    "Additional Owners": [],
+    Members: []
+  }
 };
 
 type State = Readonly<typeof initialState>;
@@ -93,13 +84,13 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   public readonly state: State = initialState;
   private listItemEntityTypeName: string;
 
-  private _getPeoplePickerItems(items: any[]) {
-    console.log('Items:', items);
+  public handleTextChange = (fieldName: string, fieldValue: string) => {
+    this.setState({
+      formData: { ...this.state.formData, [fieldName]: fieldValue }
+    });
   }
 
-  // private StyledTextFieldsTemplate = withStyles(muiStyles)(React.createElement(TextFieldsTemplate, {context: this.props.webpartContext}))
-
-  public handleTextChange(fieldName: string, fieldValue: string) {
+  public handleUserFieldChange = (fieldName: string, fieldValue: any[]) => {
     this.setState({
       formData: { ...this.state.formData, [fieldName]: fieldValue }
     });
@@ -108,10 +99,8 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   // Handle some setup after the component mounts
   public componentDidMount() {
 
-    window['spfx-site-request-context'] = this.props.webpartContext;
-    window['spfx-httpContext'] = SPHttpClient;
-
-    getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient)
+    window['wpContext'] = this.props.webpartContext;
+    getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient, "Team Site Requests")
       .then(response => {
 
         if (response.ok) {
@@ -130,58 +119,110 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
       });
   }
 
-
-  private handleRequestButtonClick() {
-    // Set the state as loading before trying to create the request.
+  private setMissingDataMessage() {
     this.setState({
-      isLoading: true
-    });
-
-    // Try to create the request.
-    createOneDriveMigrationRequest(this.props.webpartContext, this.state.userId, this.state.typeName).then((result) => {
-      this.setState({
-        isLoading: false,
-        finishedSubmitting: true
-      });
-    }).catch(err => {
-      this.setState({
-        isLoading: false,
-        didError: true
-      });
+      errorMessage: "Please provide a value for all required fields.",
+      isValidForm: false
     });
   }
 
-  public render(): React.ReactElement<ISharePointSiteRequestFormProps> {
-    // if (this.state.isLoadingTypeName) {
+  private clearErrorState() {
+    this.setState({
+      errorMessage: "",
+      isValidForm: true
+    });
+  }
+
+  private validateFormData() {
+
+
+    // Ensure something is in the title
+    if (this.state.isValidForm && (this.state.formData["Team Name"].length === 0 || this.state.formData["Primary Owner"].length !== 1 || this.state.formData["Secondary Owner"].length !== 1)) {
+      this.setMissingDataMessage();
+    } else if (!this.state.isValidForm && !(this.state.formData["Team Name"].length === 0 || this.state.formData["Primary Owner"].length !== 1 || this.state.formData["Secondary Owner"].length !== 1)) {
+      this.clearErrorState();
+    }
+  }
+
+  private handleRequestButtonClick() {
+    // Set the state as loading before trying to create the request.
+
+    if (this.state.isValidForm) {
+      this.setState({
+        isLoading: true
+      });
+  
+      let itemData = getItemDataForPost(this.state.formData);
+      // Try to create the request.
+      createSiteRequest(this.props.webpartContext, itemData, this.props.listName, this.state.typeName).then((result) => {
+        this.setState({
+          isLoading: false,
+          isSubmitted: true
+        });
+      }).catch(err => {
+        this.setState({
+          isLoading: false,
+          didError: true
+        });
+      });
+    }
+  }
+
+  private renderFormBody() {
+    if (this.state.isSubmitted) {
       return (
-        <MuiThemeProvider theme={blueTheme}>
+        <div>
+          Your site request has been submitted.
+        </div>
+      );
+    } else {
+      return (
+        <form style={containerCss} noValidate autoComplete="off">
+  
+  
+          <TextFieldTemplate label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
+  
+          <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
+          <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
+  
+          <PeoplePickerTemplate label={"Additional Owners"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
+  
+          <PeoplePickerTemplate label={"Members"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
+  
+          {/* <PeoplePickerControl /> */}
+          <br />
+          <Button style={{ marginLeft: 8 } as React.CSSProperties} disabled={!this.state.isValidForm} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
+        </form>
+      );
+    }
+  }
+
+  public render(): React.ReactElement<ISharePointSiteRequestFormProps> {
+    this.validateFormData();
+    // if (this.state.isLoadingTypeName) {
+    return (
+      <MuiThemeProvider theme={blueTheme}>
+        {/* <div> */}
+        <div className={styles.oneDriveForm}>
           {/* <div> */}
-          <div className={styles.oneDriveForm}>
+          <div className={styles.container}>
             {/* <div> */}
-            <div className={styles.container}>
+            <div className={styles.row}>
               {/* <div> */}
-              <div className={styles.row}>
-                {/* <div> */}
-                <div className={styles.column}>
-                  <span className={styles.title}>SharePoint Team Site Request</span>
+              <div className={styles.column}>
+                <span className={styles.title}>SharePoint Team Site Request</span>
 
-                  <p className={styles.description}>This is some info about sharepoint team sites.</p>
+                <p className={styles.description}>{this.state.errorMessage}</p>
 
-
-                  {/* <StyledTextFieldsTemplate /> */}
-                  <TextFieldsTemplate context={this.props.webpartContext} />
-                  {/* <TextFieldsTemplate changeHandler={this.handleTextChange} /> */}
-                  <PeoplePickerControl />
-                  {/* <PeoplePickerControl context={this.props.webpartContext} /> */}
-                  <br/>
-                  <Button variant="outlined" color="primary">Submit</Button>
-                  <Button color="secondary">Submit Request</Button>
-                </div>
+                
+                  {this.renderFormBody()}
+                
               </div>
             </div>
           </div>
-        </MuiThemeProvider>
-      );
-    
+        </div>
+      </MuiThemeProvider>
+    );
+
   }
 }

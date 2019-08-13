@@ -11,8 +11,11 @@ import * as strings from 'SharePointSiteRequestFormWebPartStrings';
 import SharePointSiteRequestForm from './components/SharePointSiteRequestForm';
 import { ISharePointSiteRequestFormProps } from './components/ISharePointSiteRequestFormProps';
 
+// Needed for IE Support
+import "@pnp/polyfill-ie11";
+
 export interface ISharePointSiteRequestFormWebPartProps {
-  description: string;
+  listName: string;
 }
 
 // const build = require("@microsoft/sp-build-web");
@@ -20,10 +23,10 @@ export interface ISharePointSiteRequestFormWebPartProps {
 export default class SharePointSiteRequestFormWebPart extends BaseClientSideWebPart<ISharePointSiteRequestFormWebPartProps> {
 
   public render(): void {
-    const element: React.ReactElement<ISharePointSiteRequestFormProps > = React.createElement(
+    const element: React.ReactElement<ISharePointSiteRequestFormProps> = React.createElement(
       SharePointSiteRequestForm,
       {
-        description: this.properties.description,
+        listName: this.properties.listName,
         webpartContext: this.context
       }
     );
@@ -51,7 +54,7 @@ export default class SharePointSiteRequestFormWebPart extends BaseClientSideWebP
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
+                PropertyPaneTextField('listName', {
                   label: strings.DescriptionFieldLabel
                 })
               ]
