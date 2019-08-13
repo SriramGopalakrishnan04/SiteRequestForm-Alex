@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { MuiThemeProvider, createMuiTheme, withStyles, WithStyles, createStyles, createGenerateClassName } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 // import indigo from '@material-ui/core/colors/indigo';
 // import red from '@material-ui/core/colors/red';
 import blue from '@material-ui/core/colors/blue';
@@ -18,11 +18,7 @@ import PeoplePickerTemplate from './field-templates/people-picker-template';
 import styles from './SharePointSiteRequestForm.module.scss';
 import { ISharePointSiteRequestFormProps } from './ISharePointSiteRequestFormProps';
 
-import { getCurrentUserLookupId, getListItemsByUserId, createSiteRequest, getListItemEntityTypeName } from '../services/sp-rest';
-
-import { SPHttpClient, SPHttpClientResponse, SPHttpClientConfiguration } from '@microsoft/sp-http';
-
-
+import { createSiteRequest, getListItemEntityTypeName } from '../services/sp-rest';
 
 const blueTheme = createMuiTheme({
   palette: {
@@ -32,16 +28,6 @@ const blueTheme = createMuiTheme({
   },
 });
 
-// const getUsersArray = (users: { Description: string }[]) => {
-//   let userstr = "";
-//   for (let user in users) {
-    
-//     userstr += `##${user['Description']}`;
-//   }
-
-//   return userstr;
-// }
-
 const getItemDataForPost = (formData: any) => {
   let itemData = {
     Title: formData["Team Name"],
@@ -49,8 +35,6 @@ const getItemDataForPost = (formData: any) => {
     SecondaryOwner: formData["Secondary Owner"],
     AdditionalOwners: formData["Additional Owners"],
     Members: formData["Members"]
-    // PrimaryOwner: getUsersArray(formData["Primary Owner"]),
-    // SecondaryOwner: getUsersArray(formData["Secondary Owner"])
   };
 
   return itemData;
@@ -98,8 +82,6 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
   // Handle some setup after the component mounts
   public componentDidMount() {
-
-    window['wpContext'] = this.props.webpartContext;
     getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient, "Team Site Requests")
       .then(response => {
 
@@ -178,8 +160,6 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     } else {
       return (
         <form style={containerCss} noValidate autoComplete="off">
-  
-  
           <TextFieldTemplate label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
   
           <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
@@ -189,7 +169,6 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   
           <PeoplePickerTemplate label={"Members"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
   
-          {/* <PeoplePickerControl /> */}
           <br />
           <Button style={{ marginLeft: 8 } as React.CSSProperties} disabled={!this.state.isValidForm} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
         </form>

@@ -6,7 +6,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 
 import PeopleSearchService from '../services/people-search-svc';
-import { WebPartContext } from '@microsoft/sp-webpart-base';
 
 
 const styles = {
