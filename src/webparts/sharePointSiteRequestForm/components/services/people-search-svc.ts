@@ -9,6 +9,7 @@ class PeopleSearchService {
     }
 
     public getSuggestions(searchVal): Promise<any> {
+      console.log("GETTING SUGGESTIONS");
         return new Promise((resolve, reject) => {
             this.wpContext.spHttpClient.post(`${this.wpContext.pageContext.site.absoluteUrl}/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser`, 
             SPHttpClient.configurations.v1, 

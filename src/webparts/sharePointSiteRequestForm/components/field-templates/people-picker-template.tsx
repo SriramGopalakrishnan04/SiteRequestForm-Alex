@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 
 import PeopleSearchService from '../services/people-search-svc';
+import TimeoutHandler from '../services/timeout-service';
 
 const styles = {
     root: {
@@ -110,30 +111,23 @@ type State = Readonly<typeof initialState>;
     class DownshiftMultiple extends React.Component<{required?: boolean; singleValue?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void}> {
     public readonly state: State = initialState;
 
-    private getSuggestions = (pplSvc: PeopleSearchService, value) => {
+    private getSuggestions = (value) => {
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
         let count = 0;
     
-        pplSvc.getSuggestions(inputValue).then(res => {
-            let pplResults = JSON.parse(res.value);
-            this.setState({
-                peopleSuggestions: pplResults
-            });
-        });
-
-        return inputLength === 0
-            ? []
-            : this.state.peopleSuggestions.filter(suggestion => {
-                
-                const keep = count < 5 && (suggestion.Description.slice(0, inputLength).toLowerCase() === inputValue || suggestion.DisplayText.slice(0, inputLength).toLowerCase() === inputValue || suggestion.Key.slice(0, inputLength).toLowerCase() === inputValue);
-    
-                if (keep) {
-                    count += 1;
-                }
-    
-                return keep;
-            });
+            return inputLength === 0
+                ? []
+                : this.state.peopleSuggestions.filter(suggestion => {
+                    
+                    const keep = count < 5 && (suggestion.Description.slice(0, inputLength).toLowerCase() === inputValue || suggestion.DisplayText.slice(0, inputLength).toLowerCase() === inputValue || suggestion.Key.slice(0, inputLength).toLowerCase() === inputValue);
+        
+                    if (keep) {
+                        count += 1;
+                    }
+        
+                    return keep;
+                });
     }
 
     private handleKeyDown = event => {
@@ -145,7 +139,24 @@ type State = Readonly<typeof initialState>;
     }
 
     private handleInputChange = event => {
+        const inputVal = event.target.value;
+        console.log("???");
         this.setState({ inputValue: event.target.value });
+
+        if (inputVal.length >= 3) {
+            console.log("setting timeout");
+            TimeoutHandler.setTimeout('people-picker', () => {
+                console.log("TIMEOUT");
+                this.props.peoplePickerService.getSuggestions(inputVal).then(res => {
+                    let pplResults = JSON.parse(res.value);
+                    this.setState({
+                        peopleSuggestions: pplResults
+                    });
+                });
+            }, 1000);
+        } else {
+            TimeoutHandler.removeTimeout('people-picker');
+        }
     }
 
     private handleChange = item => {
@@ -164,17 +175,14 @@ type State = Readonly<typeof initialState>;
     }
 
     private handleDelete = item => () => {
+        console.log("Handling delete");
         const selectedItem = [...this.state.selectedItem];
 
         selectedItem.splice(selectedItem.indexOf(item), 1);
 
         this.props.onChangeHandler(this.props.label, selectedItem);
 
-        this.setState(state => {
-            const selectedItems = [...this.state.selectedItem];
-            selectedItems.splice(selectedItems.indexOf(item), 1);
-            return { selectedItems };
-        });
+        this.setState({selectedItem:selectedItem});
     }
 
     public render() {
@@ -244,7 +252,7 @@ type State = Readonly<typeof initialState>;
                             {isOpen ? (
                                 <Paper style={classes.paper} square>
                                     {/* <Paper className={classes.paper} square> */}
-                                    {this.getSuggestions(this.props.peoplePickerService, inputValue2).map((suggestion, index) =>
+                                    {this.getSuggestions(inputValue2).map((suggestion, index) =>
                                         renderSuggestion({
                                             suggestion,
                                             index,
