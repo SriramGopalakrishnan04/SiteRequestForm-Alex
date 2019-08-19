@@ -8,7 +8,6 @@ import Chip from '@material-ui/core/Chip';
 import PeopleSearchService from '../services/people-search-svc';
 import TimeoutHandler from '../services/timeout-service';
 
-
 const styles = {
     root: {
         flexGrow: 1,
@@ -33,7 +32,10 @@ const styles = {
     inputRoot: {
         flexWrap: 'wrap',
         flex: 1,
-        minWidth: 150
+        minWidth: 150,
+        color: 'inherit',
+        'background-color': 'rgba(0,0,0,0)',
+        'border-color': 'inherit'
     } as React.CSSProperties,
     inputInput: {
         width: 'auto',
@@ -243,7 +245,7 @@ type State = Readonly<typeof initialState>;
                                     }),
                                     onChange: this.handleInputChange,
                                     onKeyDown: this.handleKeyDown,
-                                    placeholder: placeholderVal,
+                                    placeholder: placeholderVal
                                 }),
                                 label: this.props.label,
                             })}
