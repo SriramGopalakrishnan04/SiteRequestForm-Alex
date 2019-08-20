@@ -79,21 +79,45 @@ function renderInput(inputProps) {
 
 function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, selectedItem }) {
     const isHighlighted = highlightedIndex === index;
-    const isSelected = (selectedItem || '').indexOf(suggestion.label) > -1;
 
-    return (
-        <MenuItem
-            {...itemProps}
-            key={suggestion.DisplayText}
-            selected={isHighlighted}
-            component="div"
-            style={{
-                fontWeight: isSelected ? 500 : 400,
-            }}
-        >
-            {suggestion.DisplayText}
-        </MenuItem>
-    );
+    let isSelected = false;
+    for(let item of selectedItem) {
+        if (item.Key === suggestion.Key) {
+            isSelected = true;
+        }
+    }
+    
+    console.log("Rendering suggestions", suggestion, selectedItem, "isSelected", isSelected);
+
+    if (!isSelected) {
+        return (
+            <MenuItem
+                {...itemProps}
+                key={suggestion.Key}
+                selected={isHighlighted}
+                component="div"
+                style={{
+                    fontWeight: isSelected ? 600 : 400,
+                }}
+            >
+                {suggestion.DisplayText}
+            </MenuItem>
+        );
+    } else {
+        // return (
+        //     <MenuItem
+        //         {...itemProps}
+        //         key={suggestion.Key}
+        //         selected={isHighlighted}
+        //         component="div"
+        //         style={{
+        //             fontWeight: isSelected ? 600 : 400,
+        //         }}
+        //     >
+        //         {suggestion.DisplayText}
+        //     </MenuItem>
+        // );
+    }
 }
 
 
@@ -111,7 +135,10 @@ type State = Readonly<typeof initialState>;
     class DownshiftMultiple extends React.Component<{required?: boolean; singleValue?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void}> {
     public readonly state: State = initialState;
 
+    // Get the suggestions from the peopleSuggestions state value. Limit to 5?
     private getSuggestions = (value) => {
+        console.log("get suggestions", this.state.peopleSuggestions);
+        console.log(this.state);
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
         let count = 0;
@@ -119,7 +146,7 @@ type State = Readonly<typeof initialState>;
             return inputLength === 0
                 ? []
                 : this.state.peopleSuggestions.filter(suggestion => {
-                    
+                    console.log(suggestion);
                     const keep = count < 5 && (suggestion.Description.slice(0, inputLength).toLowerCase() === inputValue || suggestion.DisplayText.slice(0, inputLength).toLowerCase() === inputValue || suggestion.Key.slice(0, inputLength).toLowerCase() === inputValue);
         
                     if (keep) {
@@ -130,7 +157,9 @@ type State = Readonly<typeof initialState>;
                 });
     }
 
+    // Handle when the backspace key is pressed to remove the last 'selected' item when there is no text in the input.
     private handleKeyDown = event => {
+        console.log("handle keydown");
         const { inputValue, selectedItem } = this.state;
         if (selectedItem.length && !inputValue.length && event.key === 'Backspace') {
             let item = selectedItem[selectedItem.length - 1];
@@ -139,14 +168,12 @@ type State = Readonly<typeof initialState>;
     }
 
     private handleInputChange = event => {
+        console.log("Handle input change");
         const inputVal = event.target.value;
-        console.log("???");
         this.setState({ inputValue: event.target.value });
 
         if (inputVal.length >= 3) {
-            console.log("setting timeout");
             TimeoutHandler.setTimeout('people-picker', () => {
-                console.log("TIMEOUT");
                 this.props.peoplePickerService.getSuggestions(inputVal).then(res => {
                     let pplResults = JSON.parse(res.value);
                     this.setState({
@@ -159,7 +186,9 @@ type State = Readonly<typeof initialState>;
         }
     }
 
+    // Handle when there is a change to the 'selected' items
     private handleChange = item => {
+        console.log("Handle Change");
         let { selectedItem } = this.state;
 
         if (selectedItem.indexOf(item) === -1) {
@@ -210,6 +239,7 @@ type State = Readonly<typeof initialState>;
             <Downshift
                 id="downshift-multiple"
                 inputValue={inputValue}
+                // Handle when there is a change to the 'selected' items
                 onChange={this.handleChange}
                 selectedItem={selectedItem}
             >

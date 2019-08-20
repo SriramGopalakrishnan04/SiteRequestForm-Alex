@@ -82,23 +82,23 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
   // Handle some setup after the component mounts
   public componentDidMount() {
-    getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient, "Team Site Requests")
-      .then(response => {
+    // getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient, "Team Site Requests")
+    //   .then(response => {
 
-        if (response.ok) {
-          response.json().then(rJson => {
-            this.setState({
-              isLoadingTypeName: false,
-              isLoading: false,
-              typeName: rJson.ListItemEntityTypeFullName
-            });
-          });
-        } else {
-          this.setState({
-            didError: true
-          });
-        }
-      });
+    //     if (response.ok) {
+    //       response.json().then(rJson => {
+    //         this.setState({
+    //           isLoadingTypeName: false,
+    //           isLoading: false,
+    //           typeName: rJson.ListItemEntityTypeFullName
+    //         });
+    //       });
+    //     } else {
+    //       this.setState({
+    //         didError: true
+    //       });
+    //     }
+    //   });
   }
 
   private setMissingDataMessage() {
