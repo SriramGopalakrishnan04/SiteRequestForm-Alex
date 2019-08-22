@@ -86,8 +86,6 @@ function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, sele
             isSelected = true;
         }
     }
-    
-    console.log("Rendering suggestions", suggestion, selectedItem, "isSelected", isSelected);
 
     if (!isSelected) {
         return (
@@ -137,8 +135,6 @@ type State = Readonly<typeof initialState>;
 
     // Get the suggestions from the peopleSuggestions state value. Limit to 5?
     private getSuggestions = (value) => {
-        console.log("get suggestions", this.state.peopleSuggestions);
-        console.log(this.state);
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
         let count = 0;
@@ -146,7 +142,6 @@ type State = Readonly<typeof initialState>;
             return inputLength === 0
                 ? []
                 : this.state.peopleSuggestions.filter(suggestion => {
-                    console.log(suggestion);
                     const keep = count < 5 && (suggestion.Description.slice(0, inputLength).toLowerCase() === inputValue || suggestion.DisplayText.slice(0, inputLength).toLowerCase() === inputValue || suggestion.Key.slice(0, inputLength).toLowerCase() === inputValue);
         
                     if (keep) {
@@ -159,7 +154,6 @@ type State = Readonly<typeof initialState>;
 
     // Handle when the backspace key is pressed to remove the last 'selected' item when there is no text in the input.
     private handleKeyDown = event => {
-        console.log("handle keydown");
         const { inputValue, selectedItem } = this.state;
         if (selectedItem.length && !inputValue.length && event.key === 'Backspace') {
             let item = selectedItem[selectedItem.length - 1];
@@ -168,7 +162,6 @@ type State = Readonly<typeof initialState>;
     }
 
     private handleInputChange = event => {
-        console.log("Handle input change");
         const inputVal = event.target.value;
         this.setState({ inputValue: event.target.value });
 
@@ -188,7 +181,6 @@ type State = Readonly<typeof initialState>;
 
     // Handle when there is a change to the 'selected' items
     private handleChange = item => {
-        console.log("Handle Change");
         let { selectedItem } = this.state;
 
         if (selectedItem.indexOf(item) === -1) {
@@ -204,7 +196,6 @@ type State = Readonly<typeof initialState>;
     }
 
     private handleDelete = item => () => {
-        console.log("Handling delete");
         const selectedItem = [...this.state.selectedItem];
 
         selectedItem.splice(selectedItem.indexOf(item), 1);
