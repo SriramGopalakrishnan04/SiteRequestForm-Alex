@@ -52,36 +52,29 @@ const styles = {
 
 function renderInput(inputProps) {
     const { InputProps, classes, ref, ...other } = inputProps;
-    // if (InputProps.disabled) {
-    //     return (<div></div>);
-    // } else {
-        return (
-            <TextField
-                // fullWidth
-                margin="normal"
-                variant='outlined'
-                required={InputProps.required}
-                InputProps={{
-                    inputRef: ref,
-                    style: classes.selectBox,
-                    // classes: {
-                    //     root: classes.inputRoot,
-                    //     input: classes.inputInput,
-                    // },
-                    ...InputProps,
-                }}
-                inputProps={{style: classes.inputRoot}}
-                {...other}
-            />
-        );
-    // }
+
+    return (
+        <TextField
+            // fullWidth
+            margin="normal"
+            variant='outlined'
+            required={InputProps.required}
+            InputProps={{
+                inputRef: ref,
+                style: classes.selectBox,
+                ...InputProps,
+            }}
+            inputProps={{ style: classes.inputRoot }}
+            {...other}
+        />
+    );
 }
 
 function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, selectedItem }) {
     const isHighlighted = highlightedIndex === index;
 
     let isSelected = false;
-    for(let item of selectedItem) {
+    for (let item of selectedItem) {
         if (item.Key === suggestion.Key) {
             isSelected = true;
         }
@@ -102,19 +95,8 @@ function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, sele
             </MenuItem>
         );
     } else {
-        // return (
-        //     <MenuItem
-        //         {...itemProps}
-        //         key={suggestion.Key}
-        //         selected={isHighlighted}
-        //         component="div"
-        //         style={{
-        //             fontWeight: isSelected ? 600 : 400,
-        //         }}
-        //     >
-        //         {suggestion.DisplayText}
-        //     </MenuItem>
-        // );
+        // If it is already selected, don't return any menu item
+
     }
 }
 
@@ -130,7 +112,7 @@ const initialState = {
 
 type State = Readonly<typeof initialState>;
 
-    class DownshiftMultiple extends React.Component<{required?: boolean; singleValue?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void}> {
+class DownshiftMultiple extends React.Component<{ required?: boolean; singleValue?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void }> {
     public readonly state: State = initialState;
 
     // Get the suggestions from the peopleSuggestions state value. Limit to 5?
@@ -138,18 +120,19 @@ type State = Readonly<typeof initialState>;
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
         let count = 0;
-    
-            return inputLength === 0
-                ? []
-                : this.state.peopleSuggestions.filter(suggestion => {
-                    const keep = count < 5 && (suggestion.Description.slice(0, inputLength).toLowerCase() === inputValue || suggestion.DisplayText.slice(0, inputLength).toLowerCase() === inputValue || suggestion.Key.slice(0, inputLength).toLowerCase() === inputValue);
-        
-                    if (keep) {
-                        count += 1;
-                    }
-        
-                    return keep;
-                });
+
+        return inputLength === 0
+            ? []
+            : this.state.peopleSuggestions.filter(suggestion => {
+                // determine if we already have 5 suggestions or the current suggestion matches the search input.
+                const keep = count < 5 && (suggestion.Description.slice(0, inputLength).toLowerCase() === inputValue || suggestion.DisplayText.slice(0, inputLength).toLowerCase() === inputValue || suggestion.Key.slice(0, inputLength).toLowerCase() === inputValue);
+
+                if (keep) {
+                    count += 1;
+                }
+
+                return keep;
+            });
     }
 
     // Handle when the backspace key is pressed to remove the last 'selected' item when there is no text in the input.
@@ -202,12 +185,12 @@ type State = Readonly<typeof initialState>;
 
         this.props.onChangeHandler(this.props.label, selectedItem);
 
-        this.setState({selectedItem:selectedItem});
+        this.setState({ selectedItem: selectedItem });
     }
 
     public render() {
         const classes = styles;
-        
+
         const { inputValue, selectedItem } = this.state;
 
         let errorState = false;
@@ -243,13 +226,12 @@ type State = Readonly<typeof initialState>;
                     highlightedIndex,
                 }) => (
                         <div style={classes.container}>
-                            {/* <div className={classes.container}> */}
                             {renderInput({
                                 fullWidth: true,
                                 classes,
 
                                 InputProps: getInputProps({
-                                    error:errorState,
+                                    error: errorState,
                                     disabled: inputDisabled,
                                     required: this.props.required,
                                     startAdornment: selectedItem.map(item => {
@@ -259,7 +241,6 @@ type State = Readonly<typeof initialState>;
                                                 tabIndex={-1}
                                                 label={item.DisplayText}
                                                 style={classes.chip}
-                                                // className={classes.chip}
                                                 onDelete={this.handleDelete(item)}
                                             />
                                         );
@@ -272,7 +253,6 @@ type State = Readonly<typeof initialState>;
                             })}
                             {isOpen ? (
                                 <Paper style={classes.paper} square>
-                                    {/* <Paper className={classes.paper} square> */}
                                     {this.getSuggestions(inputValue2).map((suggestion, index) =>
                                         renderSuggestion({
                                             suggestion,
@@ -304,7 +284,7 @@ function PeoplePickerTemplate(props) {
 
     return (
         <div style={classes.root}>
-            <DownshiftMultiple required={props.required} singleValue={singleValue} label={props.label} peoplePickerService={peopleSearchSvc} onChangeHandler={props.onChangeHandler}/>
+            <DownshiftMultiple required={props.required} singleValue={singleValue} label={props.label} peoplePickerService={peopleSearchSvc} onChangeHandler={props.onChangeHandler} />
         </div>
     );
 }

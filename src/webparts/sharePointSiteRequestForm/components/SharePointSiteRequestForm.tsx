@@ -1,14 +1,10 @@
 import * as React from 'react';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-// import indigo from '@material-ui/core/colors/indigo';
-// import red from '@material-ui/core/colors/red';
+
 import blue from '@material-ui/core/colors/blue';
-// import green from '@material-ui/core/colors/green';
 import yellow from '@material-ui/core/colors/yellow';
 
-
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 import TextFieldTemplate from './field-templates/text-field';
@@ -46,11 +42,7 @@ const containerCss = {
 } as React.CSSProperties;
 
 const initialState = {
-  userId: null,
   isSubmitted: false,
-  buttonDisabled: true,
-  isLoadingTypeName: true,
-  typeName: '',
   isValidForm: false,
   errorMessage: "Please provide a value for all required fields.",
   formData: {
@@ -58,7 +50,7 @@ const initialState = {
     "Primary Owner": [],
     "Secondary Owner": [],
     "Additional Owners": [],
-    Members: []
+    "Members": []
   }
 };
 
@@ -66,7 +58,6 @@ type State = Readonly<typeof initialState>;
 
 export default class SharePointSiteRequestForm extends React.Component<ISharePointSiteRequestFormProps, {}> {
   public readonly state: State = initialState;
-  private listItemEntityTypeName: string;
 
   public handleTextChange = (fieldName: string, fieldValue: string) => {
     this.setState({
@@ -80,26 +71,10 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     });
   }
 
-  // Handle some setup after the component mounts
-  public componentDidMount() {
-    // getListItemEntityTypeName(this.props.webpartContext.pageContext.site.absoluteUrl, this.props.webpartContext.spHttpClient, "Team Site Requests")
-    //   .then(response => {
-
-    //     if (response.ok) {
-    //       response.json().then(rJson => {
-    //         this.setState({
-    //           isLoadingTypeName: false,
-    //           isLoading: false,
-    //           typeName: rJson.ListItemEntityTypeFullName
-    //         });
-    //       });
-    //     } else {
-    //       this.setState({
-    //         didError: true
-    //       });
-    //     }
-    //   });
-  }
+  // // Handle some setup after the component mounts
+  // public componentDidMount() {
+    
+  // }
 
   private setMissingDataMessage() {
     this.setState({
@@ -116,8 +91,6 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   }
 
   private validateFormData() {
-
-
     // Ensure something is in the title
     if (this.state.isValidForm && (this.state.formData["Team Name"].length === 0 || this.state.formData["Primary Owner"].length !== 1 || this.state.formData["Secondary Owner"].length !== 1)) {
       this.setMissingDataMessage();
@@ -136,7 +109,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   
       let itemData = getItemDataForPost(this.state.formData);
       // Try to create the request.
-      createSiteRequest(this.props.webpartContext, itemData, this.props.listName, this.state.typeName).then((result) => {
+      createSiteRequest(this.props.webpartContext, itemData, this.props.listName).then((result) => {
         this.setState({
           isLoading: false,
           isSubmitted: true

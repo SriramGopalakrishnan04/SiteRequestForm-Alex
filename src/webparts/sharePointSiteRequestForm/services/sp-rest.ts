@@ -46,7 +46,7 @@ function getListItemsByUserId(webPartContext: WebPartContext, userId: string, li
     });
 }
 
-function createSiteRequest(webPartContext: WebPartContext, formData: any, listName: string, typeName: string): Promise<any> {
+function createSiteRequest(webPartContext: WebPartContext, formData: any, listName: string): Promise<any> {
     sp.setup({
         spfxContext: webPartContext
     });
