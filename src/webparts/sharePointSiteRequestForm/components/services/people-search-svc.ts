@@ -9,17 +9,11 @@ class PeopleSearchService {
     }
 
     public getSuggestions(searchVal): Promise<any> {
-      console.log("GETTING SUGGESTIONS");
         return new Promise((resolve, reject) => {
             this.wpContext.spHttpClient.post(`${this.wpContext.pageContext.site.absoluteUrl}/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser`, 
             SPHttpClient.configurations.v1, 
             {
               credentials: 'same-origin',
-                // headers: {
-                //   'Accept': `application/json; odata=verbose`,
-                //   'Content-Type': `application/json; odata=verbose`,
-                //   'X-RequestDigest':" document.getElementById('__REQUESTDIGEST').value"
-                // },
                 body: JSON.stringify({
                   queryParams: {
                     AllowEmailAddresses: true,

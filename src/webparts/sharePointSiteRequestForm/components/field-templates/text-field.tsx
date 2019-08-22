@@ -8,8 +8,9 @@ const textFieldCss = {
     marginRight: '8px'
 };
 
+// This is necessary due to some other styles that are loaded into SharePoint pages causing the backgrounds of the fields to turn white.
 const textFieldInputStyles = {
-    color: 'inherit',
+    'color': 'inherit',
     'background-color': 'rgba(0,0,0,0)',
     'border-color': 'inherit'
 };
@@ -58,7 +59,6 @@ class TextFieldTemplate extends React.Component<TextFieldTemplateProps> {
                 multiline={this.props.multiline}
                 fullWidth
                 color="primary"
-                //   id="team-name"
                 onChange={(evt) => {
                         this.props.onChangeHandler(this.props.label, evt.target.value);
                         this.setState({inputValue: evt.target.value});

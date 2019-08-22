@@ -2,7 +2,6 @@ class TimeoutHandler {
     private static timeoutList = {};
 
     public static setTimeout(namespace: string, callback: Function, interval: number): void {
-        console.log(this.timeoutList);
         if (this.timeoutList[namespace]) {
             clearTimeout(this.timeoutList[namespace]);
         }
