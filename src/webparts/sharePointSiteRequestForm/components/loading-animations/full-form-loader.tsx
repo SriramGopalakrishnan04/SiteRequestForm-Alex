@@ -1,10 +1,9 @@
 import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Check from '@material-ui/icons/Check';
-import green from '@material-ui/core/colors/green';
 import Fade from '@material-ui/core/Fade';
-import Grow from '@material-ui/core/Grow';
 import Zoom from '@material-ui/core/Zoom';
+import green from '@material-ui/core/colors/green';
 
 const fullFormContainerHiddenCss = {
     width: '100%',
