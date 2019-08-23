@@ -25,6 +25,7 @@ const styles = {
         marginTop: 4,
         left: 0,
         right: 0,
+        background: '#fff'
     } as React.CSSProperties,
     chip: {
         margin: `${12 / 2}px ${8 / 4}px`,
@@ -83,15 +84,19 @@ function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, sele
     if (!isSelected) {
         return (
             <MenuItem
+
                 {...itemProps}
                 key={suggestion.Key}
                 selected={isHighlighted}
                 component="div"
                 style={{
                     fontWeight: isSelected ? 600 : 400,
+                    color: 'rgba(0, 0, 0, 0.87)',
+                    textOverflow: 'ellipsis',
+                    display: 'block'
                 }}
             >
-                {suggestion.DisplayText}
+                {`${suggestion.DisplayText} | ${suggestion.Description}`}
             </MenuItem>
         );
     } else {
@@ -251,6 +256,7 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
                                 }),
                                 label: this.props.label,
                             })}
+                            {/* {true ? ( */}
                             {isOpen ? (
                                 <Paper style={classes.paper} square>
                                     {this.getSuggestions(inputValue2).map((suggestion, index) =>

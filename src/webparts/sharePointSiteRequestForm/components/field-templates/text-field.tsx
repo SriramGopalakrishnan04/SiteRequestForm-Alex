@@ -13,7 +13,7 @@ const textFieldInputStyles = {
     'color': 'inherit',
     'background-color': 'rgba(0,0,0,0)',
     'border-color': 'inherit'
-};
+} as React.CSSProperties;
 
 interface TextFieldTemplateProps {
     label: string;

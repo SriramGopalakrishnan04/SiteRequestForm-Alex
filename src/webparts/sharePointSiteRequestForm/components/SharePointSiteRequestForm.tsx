@@ -1,15 +1,22 @@
 import * as React from 'react';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 
-import blue from '@material-ui/core/colors/blue';
-import yellow from '@material-ui/core/colors/yellow';
+import amber from '@material-ui/core/colors/amber';
+import grey from '@material-ui/core/colors/grey';
+// import blue from '@material-ui/core/colors/blue';
+// import yellow from '@material-ui/core/colors/yellow';
+import green from '@material-ui/core/colors/green';
 
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import TextFieldTemplate from './field-templates/text-field';
 
 import PeoplePickerTemplate from './field-templates/people-picker-template';
+
+import FullFormLoader from './loading-animations/full-form-loader';
 
 import styles from './SharePointSiteRequestForm.module.scss';
 import { ISharePointSiteRequestFormProps } from './ISharePointSiteRequestFormProps';
@@ -18,8 +25,8 @@ import { createSiteRequest, getListItemEntityTypeName } from '../services/sp-res
 
 const blueTheme = createMuiTheme({
   palette: {
-    primary: blue,
-    secondary: yellow,
+    primary: amber,
+    secondary: grey,
     type: "dark"
   },
 });
@@ -41,6 +48,33 @@ const containerCss = {
   flexWrap: 'wrap'
 } as React.CSSProperties;
 
+const buttonWrapperCss = {
+  margin: 8,
+  position: 'relative',
+} as React.CSSProperties;
+
+const buttonProgressCss = {
+  color: green[500],
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  marginTop: -12,
+  marginLeft: -12,
+} as React.CSSProperties;
+
+const buttonSuccessCss = {
+  backgroundColor: green[500],
+  margin: 8
+}
+
+const buttonBaseCss = {
+  margin: 8
+}
+
+const successMessageCss = {
+  color: green[500]
+}
+
 const initialState = {
   isSubmitted: false,
   isValidForm: false,
@@ -51,13 +85,22 @@ const initialState = {
     "Secondary Owner": [],
     "Additional Owners": [],
     "Members": []
-  }
+  },
+  loading: false
 };
 
 type State = Readonly<typeof initialState>;
 
 export default class SharePointSiteRequestForm extends React.Component<ISharePointSiteRequestFormProps, {}> {
   public readonly state: State = initialState;
+
+  private getButtonCss = () => {
+    if (this.state.isSubmitted) {
+      return buttonSuccessCss
+    } else {
+      return buttonBaseCss
+    }
+  }
 
   public handleTextChange = (fieldName: string, fieldValue: string) => {
     this.setState({
@@ -73,7 +116,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
   // // Handle some setup after the component mounts
   // public componentDidMount() {
-    
+
   // }
 
   private setMissingDataMessage() {
@@ -104,19 +147,19 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
     if (this.state.isValidForm) {
       this.setState({
-        isLoading: true
+        loading: true
       });
-  
+
       let itemData = getItemDataForPost(this.state.formData);
       // Try to create the request.
       createSiteRequest(this.props.webpartContext, itemData, this.props.listName).then((result) => {
         this.setState({
-          isLoading: false,
+          loading: false,
           isSubmitted: true
         });
       }).catch(err => {
         this.setState({
-          isLoading: false,
+          loading: false,
           didError: true
         });
       });
@@ -124,29 +167,35 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   }
 
   private renderFormBody() {
-    if (this.state.isSubmitted) {
-      return (
-        <div>
-          Your site request has been submitted.
+    // if (this.state.isSubmitted) {
+    //   return (
+
+    //   );
+    // } else {
+    return (
+
+      <form style={containerCss} noValidate autoComplete="off">
+        {this.state.isSubmitted && <div style={successMessageCss}>Your site request has been submitted.</div>}
+        {!this.state.isSubmitted && <br />}
+        <TextFieldTemplate label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
+
+        <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
+        <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
+
+        <PeoplePickerTemplate label={"Additional Owners"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
+
+        <PeoplePickerTemplate label={"Members"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
+
+        <br />
+        <div style={buttonWrapperCss}>
+          <Button style={this.getButtonCss()} disabled={!this.state.isValidForm || this.state.loading || this.state.isSubmitted} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
+          {/* {this.state.loading && <CircularProgress size={24} style={buttonProgressCss} />} */}
         </div>
-      );
-    } else {
-      return (
-        <form style={containerCss} noValidate autoComplete="off">
-          <TextFieldTemplate label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
-  
-          <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
-          <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
-  
-          <PeoplePickerTemplate label={"Additional Owners"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
-  
-          <PeoplePickerTemplate label={"Members"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
-  
-          <br />
-          <Button style={{ marginLeft: 8 } as React.CSSProperties} disabled={!this.state.isValidForm} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
-        </form>
-      );
-    }
+        {/* {this.state.loading && <FullFormLoader size={24} style={buttonProgressCss} />} */}
+
+      </form>
+    );
+    // }
   }
 
   public render(): React.ReactElement<ISharePointSiteRequestFormProps> {
@@ -154,24 +203,28 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     // if (this.state.isLoadingTypeName) {
     return (
       <MuiThemeProvider theme={blueTheme}>
+
         {/* <div> */}
         <div className={styles.oneDriveForm}>
-          {/* <div> */}
-          <div className={styles.container}>
+          <Paper>
+            <FullFormLoader active={this.state.loading} complete={this.state.isSubmitted} />
+
             {/* <div> */}
-            <div className={styles.row}>
               {/* <div> */}
-              <div className={styles.column}>
-                <span className={styles.title}>SharePoint Team Site Request</span>
+              <div className={styles.row}>
+                {/* <div> */}
+                <div className={styles.column}>
+                  <span className={styles.title}>SharePoint Team Site Request</span>
 
-                <p className={styles.description}>{this.state.errorMessage}</p>
+                  <p className={styles.description}>{this.state.errorMessage}</p>
 
-                
+
                   {this.renderFormBody()}
-                
+
+                </div>
               </div>
-            </div>
-          </div>
+          </Paper>
+
         </div>
       </MuiThemeProvider>
     );
