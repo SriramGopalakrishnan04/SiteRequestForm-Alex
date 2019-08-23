@@ -10,7 +10,6 @@ import grey from '@material-ui/core/colors/grey';
 import green from '@material-ui/core/colors/green';
 
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import TextFieldTemplate from './field-templates/text-field';
 
@@ -65,15 +64,15 @@ const buttonProgressCss = {
 const buttonSuccessCss = {
   backgroundColor: green[500],
   margin: 8
-}
+};
 
 const buttonBaseCss = {
   margin: 8
-}
+};
 
 const successMessageCss = {
   color: green[500]
-}
+};
 
 const initialState = {
   isSubmitted: false,
@@ -96,9 +95,9 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
   private getButtonCss = () => {
     if (this.state.isSubmitted) {
-      return buttonSuccessCss
+      return buttonSuccessCss;
     } else {
-      return buttonBaseCss
+      return buttonBaseCss;
     }
   }
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Check } from '@material-ui/icons';
-import green from '@material-ui/core/colors/green'
+import Check from '@material-ui/icons/Check';
+import green from '@material-ui/core/colors/green';
 import Fade from '@material-ui/core/Fade';
 
 const fullFormContainerHiddenCss = {
@@ -45,17 +45,17 @@ const checkCss = {
     margin: 'auto',
     width: 100,
     height: 100
-}
+};
 
-const getCssProps = ({ active, complete }) => {
-    if (complete) {
-        return fullFormContainerCompleteCss
-    } else if (active) {
-        return fullFormContainerVisibleCss
+const getCssProps = (props) => {
+    if (props.complete) {
+        return fullFormContainerCompleteCss;
+    } else if (props.active) {
+        return fullFormContainerVisibleCss;
     } else {
-        return fullFormContainerHiddenCss
+        return fullFormContainerHiddenCss;
     }
-}
+};
 
 const FullFormLoader = (props) => {
     const currentCssProps = getCssProps(props);
@@ -65,9 +65,6 @@ const FullFormLoader = (props) => {
                 <Fade in={!props.complete}>
                     <CircularProgress style={spinnerCss} size={100} />
                 </Fade>
-                {/* <Fade in={props.complete}>
-                    <Check color="primary" style={checkCss} />
-                </Fade> */}
             </div>
             <div style={currentCssProps}>
                 <Fade in={props.complete}>
@@ -75,7 +72,7 @@ const FullFormLoader = (props) => {
                 </Fade>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default FullFormLoader
+export default FullFormLoader;
