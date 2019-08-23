@@ -1,8 +1,9 @@
 import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Check from '@material-ui/icons/Check';
-import green from '@material-ui/core/colors/green';
 import Fade from '@material-ui/core/Fade';
+import Zoom from '@material-ui/core/Zoom';
+import green from '@material-ui/core/colors/green';
 
 const fullFormContainerHiddenCss = {
     width: '100%',
@@ -43,8 +44,8 @@ const spinnerCss = {
 
 const checkCss = {
     margin: 'auto',
-    width: 100,
-    height: 100
+    width: '50%',
+    height: '50%'
 };
 
 const getCssProps = (props) => {
@@ -62,14 +63,14 @@ const FullFormLoader = (props) => {
     return (
         <div>
             <div style={currentCssProps}>
-                <Fade in={!props.complete}>
+                <Fade in={!props.complete && props.active}>
                     <CircularProgress style={spinnerCss} size={100} />
                 </Fade>
             </div>
             <div style={currentCssProps}>
-                <Fade in={props.complete}>
+                <Zoom in={props.complete}>
                     <Check color="primary" style={checkCss} />
-                </Fade>
+                </Zoom>
             </div>
         </div>
     );
