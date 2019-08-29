@@ -35,8 +35,8 @@ const styles = {
         flex: 1,
         minWidth: 150,
         color: 'inherit',
-        'background-color': 'rgba(0,0,0,0)',
-        'border-color': 'inherit'
+        'backgroundColor': 'rgba(0,0,0,0)',
+        'borderColor': 'inherit'
     } as React.CSSProperties,
     inputInput: {
         width: 'auto',
