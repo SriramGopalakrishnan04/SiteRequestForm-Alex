@@ -78,6 +78,7 @@ const initialState = {
   isSubmitted: false,
   isValidForm: false,
   errorMessage: "Please provide a value for all required fields.",
+  formState: "missingData",
   formData: {
     "Team Name": "",
     "Primary Owner": [],
@@ -118,25 +119,39 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
   // }
 
+  private setOwnerConflictErrorMessage() {
+    this.setState({
+      errorMessage: "Primary Owner cannot be the same as Secondary Owner",
+      formState: "ownersMatch"
+    });
+  }
+
   private setMissingDataMessage() {
     this.setState({
       errorMessage: "Please provide a value for all required fields.",
-      isValidForm: false
+      formState: "missingData"
     });
   }
 
   private clearErrorState() {
     this.setState({
       errorMessage: "",
-      isValidForm: true
+      formState: "clean"
     });
   }
 
   private validateFormData() {
-    // Ensure something is in the title
-    if (this.state.isValidForm && (this.state.formData["Team Name"].length === 0 || this.state.formData["Primary Owner"].length !== 1 || this.state.formData["Secondary Owner"].length !== 1)) {
-      this.setMissingDataMessage();
-    } else if (!this.state.isValidForm && !(this.state.formData["Team Name"].length === 0 || this.state.formData["Primary Owner"].length !== 1 || this.state.formData["Secondary Owner"].length !== 1)) {
+    const isMissingRequiredData = this.state.formData["Team Name"].length === 0 || this.state.formData["Primary Owner"].length !== 1 || this.state.formData["Secondary Owner"].length !== 1;
+    const hasMatchingPrimarySecondary = (this.state.formData["Primary Owner"].length && this.state.formData["Secondary Owner"].length && (this.state.formData["Primary Owner"][0]["Key"] === this.state.formData["Secondary Owner"][0]["Key"]));
+    if (isMissingRequiredData) {
+      if (this.state.formState !== "missingData") {
+        this.setMissingDataMessage();
+      }
+    } else if (hasMatchingPrimarySecondary) {
+      if (this.state.formState !== "ownersMatch") {
+        this.setOwnerConflictErrorMessage();
+      }
+    } else if (this.state.formState !== "clean") {
       this.clearErrorState();
     }
   }
@@ -144,7 +159,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   private handleRequestButtonClick() {
     // Set the state as loading before trying to create the request.
 
-    if (this.state.isValidForm) {
+    if (this.state.formState === "clean") {
       this.setState({
         loading: true
       });
@@ -178,8 +193,8 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         {!this.state.isSubmitted && <br />}
         <TextFieldTemplate label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
 
-        <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
-        <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue />
+        <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"}/>
+        <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"}/>
 
         <PeoplePickerTemplate label={"Additional Owners"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
 
@@ -187,7 +202,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
         <br />
         <div style={buttonWrapperCss}>
-          <Button style={this.getButtonCss()} disabled={!this.state.isValidForm || this.state.loading || this.state.isSubmitted} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
+          <Button style={this.getButtonCss()} disabled={!(this.state.formState === "clean") || this.state.loading || this.state.isSubmitted} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
           {/* {this.state.loading && <CircularProgress size={24} style={buttonProgressCss} />} */}
         </div>
         {/* {this.state.loading && <FullFormLoader size={24} style={buttonProgressCss} />} */}
@@ -215,7 +230,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
                 <div className={styles.column}>
                   <span className={styles.title}>SharePoint Team Site Request</span>
 
-                  <p className={styles.description}>{this.state.errorMessage}</p>
+                  <p className={styles.description}>{this.state.errorMessage}&nbsp;</p>
 
 
                   {this.renderFormBody()}

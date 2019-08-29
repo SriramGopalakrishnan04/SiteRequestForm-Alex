@@ -31,7 +31,9 @@
 
   .description {
     @include ms-font-l;
-    @include ms-fontColor-white;
+    // @include ms-fontColor-white;
+    color: #f44336;
+    margin-bottom: 0px;
   }
 
   .button {
