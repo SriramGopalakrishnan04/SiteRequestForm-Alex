@@ -18,8 +18,6 @@ export interface ISharePointSiteRequestFormWebPartProps {
   listName: string;
 }
 
-// const build = require("@microsoft/sp-build-web");
-
 export default class SharePointSiteRequestFormWebPart extends BaseClientSideWebPart<ISharePointSiteRequestFormWebPartProps> {
 
   public render(): void {
@@ -30,8 +28,7 @@ export default class SharePointSiteRequestFormWebPart extends BaseClientSideWebP
         webpartContext: this.context
       }
     );
-    // alert("BUILD")
-    //   window['build'] = build;
+    
     ReactDom.render(element, this.domElement);
   }
 

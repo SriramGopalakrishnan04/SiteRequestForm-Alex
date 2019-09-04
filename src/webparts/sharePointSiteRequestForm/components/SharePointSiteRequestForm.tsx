@@ -86,7 +86,8 @@ const initialState = {
     "Additional Owners": [],
     "Members": []
   },
-  loading: false
+  loading: false,
+  isConfigured: false
 };
 
 type State = Readonly<typeof initialState>;
@@ -115,9 +116,36 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   }
 
   // // Handle some setup after the component mounts
-  // public componentDidMount() {
+  public componentDidMount() {
+    const listName = this.props.listName;
 
-  // }
+    if (listName && listName.trim()) {
+      this.setState({
+        isConfigured: true
+      });
+    }
+    console.log("state", this.state);
+    console.log("props", this.props);
+  }
+
+  public componentDidUpdate(prevProps, prevState, snapshot) {
+    const listName = this.props.listName;
+
+    if (listName && listName.trim() && !this.state.isConfigured) {
+      this.setState({
+        isConfigured: true
+      });
+    } else if (this.state.isConfigured && !(listName && listName.trim())) {
+      this.setState({
+        isConfigured: false
+      });
+    }
+
+    console.log("update");
+    console.log(prevProps);
+    console.log(prevState);
+    console.log(snapshot);
+  }
 
   private setOwnerConflictErrorMessage() {
     this.setState({
@@ -221,7 +249,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         {/* <div> */}
         <div className={styles.oneDriveForm}>
           <Paper>
-            <FullFormLoader active={this.state.loading} complete={this.state.isSubmitted} />
+            <FullFormLoader active={this.state.loading} complete={this.state.isSubmitted} warning={!this.state.isConfigured} warningMessage="The webpart is not configured" />
 
             {/* <div> */}
               {/* <div> */}
