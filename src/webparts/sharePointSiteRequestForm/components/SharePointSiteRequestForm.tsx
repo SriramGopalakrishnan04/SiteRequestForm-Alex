@@ -124,8 +124,6 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         isConfigured: true
       });
     }
-    console.log("state", this.state);
-    console.log("props", this.props);
   }
 
   public componentDidUpdate(prevProps, prevState, snapshot) {
@@ -140,11 +138,6 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         isConfigured: false
       });
     }
-
-    console.log("update");
-    console.log(prevProps);
-    console.log(prevState);
-    console.log(snapshot);
   }
 
   private setOwnerConflictErrorMessage() {
