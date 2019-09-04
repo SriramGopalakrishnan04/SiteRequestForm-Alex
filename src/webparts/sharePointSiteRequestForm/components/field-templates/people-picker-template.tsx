@@ -35,8 +35,8 @@ const styles = {
         flex: 1,
         minWidth: 150,
         color: 'inherit',
-        'background-color': 'rgba(0,0,0,0)',
-        'border-color': 'inherit'
+        'backgroundColor': 'rgba(0,0,0,0)',
+        'borderColor': 'inherit'
     } as React.CSSProperties,
     inputInput: {
         width: 'auto',
@@ -117,7 +117,7 @@ const initialState = {
 
 type State = Readonly<typeof initialState>;
 
-class DownshiftMultiple extends React.Component<{ required?: boolean; singleValue?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void }> {
+class DownshiftMultiple extends React.Component<{ required?: boolean; singleValue?: boolean; error?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void }> {
     public readonly state: State = initialState;
 
     // Get the suggestions from the peopleSuggestions state value. Limit to 5?
@@ -171,7 +171,9 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
     private handleChange = item => {
         let { selectedItem } = this.state;
 
-        if (selectedItem.indexOf(item) === -1) {
+        if (this.props.singleValue) {
+            selectedItem = [item];
+        } else if (selectedItem.indexOf(item) === -1) {
             selectedItem = [...selectedItem, item];
         }
 
@@ -201,15 +203,15 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
         let errorState = false;
         let inputDisabled = false;
 
-        let placeholderVal = "Select multiple users";
-        if (this.props.required && this.state.selectedItem.length === 0) {
+        let placeholderVal = "Search for and select multiple users";
+        if ((this.props.required && this.state.selectedItem.length === 0) || this.props.error) {
             errorState = true;
         }
 
         if (this.props.singleValue) {
-            placeholderVal = "Select one user";
+            placeholderVal = "Search for and select one user";
 
-            if (this.state.selectedItem.length !== 0) {
+            if (this.state.selectedItem.length !== 0 && !this.props.error) {
                 inputDisabled = true;
             }
         }
@@ -290,7 +292,7 @@ function PeoplePickerTemplate(props) {
 
     return (
         <div style={classes.root}>
-            <DownshiftMultiple required={props.required} singleValue={singleValue} label={props.label} peoplePickerService={peopleSearchSvc} onChangeHandler={props.onChangeHandler} />
+            <DownshiftMultiple required={props.required} singleValue={singleValue} error={props.error} label={props.label} peoplePickerService={peopleSearchSvc} onChangeHandler={props.onChangeHandler} />
         </div>
     );
 }

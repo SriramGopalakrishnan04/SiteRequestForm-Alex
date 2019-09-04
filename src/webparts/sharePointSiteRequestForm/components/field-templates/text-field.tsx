@@ -11,8 +11,8 @@ const textFieldCss = {
 // This is necessary due to some other styles that are loaded into SharePoint pages causing the backgrounds of the fields to turn white.
 const textFieldInputStyles = {
     'color': 'inherit',
-    'background-color': 'rgba(0,0,0,0)',
-    'border-color': 'inherit'
+    'backgroundColor': 'rgba(0,0,0,0)',
+    'borderColor': 'inherit'
 } as React.CSSProperties;
 
 interface TextFieldTemplateProps {
