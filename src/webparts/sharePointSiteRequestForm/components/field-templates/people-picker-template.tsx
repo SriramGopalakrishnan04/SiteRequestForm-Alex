@@ -101,7 +101,6 @@ function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, sele
         );
     } else {
         // If it is already selected, don't return any menu item
-
     }
 }
 
@@ -112,12 +111,13 @@ const initialState = {
     inputValue: '',
     selectedItem: [],
     peopleSuggestions: [],
-    disabled: false
+    disabled: false,
+    dirty: false
 };
 
 type State = Readonly<typeof initialState>;
 
-class DownshiftMultiple extends React.Component<{ required?: boolean; singleValue?: boolean; error?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void }> {
+class DownshiftMultiple extends React.Component<{ required?: boolean; singleValue?: boolean; error?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void; addFieldError: (fieldName: string) => void; removeFieldError: (fieldName: string) => void; }> {
     public readonly state: State = initialState;
 
     // Get the suggestions from the peopleSuggestions state value. Limit to 5?
@@ -153,6 +153,8 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
         const inputVal = event.target.value;
         this.setState({ inputValue: event.target.value });
 
+        TimeoutHandler.removeTimeout('people-picker');
+
         if (inputVal.length >= 3) {
             TimeoutHandler.setTimeout('people-picker', () => {
                 this.props.peoplePickerService.getSuggestions(inputVal).then(res => {
@@ -161,9 +163,7 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
                         peopleSuggestions: pplResults
                     });
                 });
-            }, 1000);
-        } else {
-            TimeoutHandler.removeTimeout('people-picker');
+            }, 250);
         }
     }
 
@@ -198,18 +198,23 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
     public render() {
         const classes = styles;
 
-        const { inputValue, selectedItem } = this.state;
+        const { inputValue, selectedItem, dirty } = this.state;
+
+
 
         let errorState = false;
         let inputDisabled = false;
 
-        let placeholderVal = "Search for and select multiple users";
-        if ((this.props.required && this.state.selectedItem.length === 0) || this.props.error) {
+        let placeholderVal = "Search for and select multiple USERS";
+        if ((this.props.required && this.state.selectedItem.length === 0) || (this.state.inputValue !== "") || this.props.error) {
+            this.props.addFieldError(this.props.label);
             errorState = true;
+        } else {
+            this.props.removeFieldError(this.props.label);
         }
 
         if (this.props.singleValue) {
-            placeholderVal = "Search for and select one user";
+            placeholderVal = "Search for and select one USER";
 
             if (this.state.selectedItem.length !== 0 && !this.props.error) {
                 inputDisabled = true;
@@ -292,7 +297,7 @@ function PeoplePickerTemplate(props) {
 
     return (
         <div style={classes.root}>
-            <DownshiftMultiple required={props.required} singleValue={singleValue} error={props.error} label={props.label} peoplePickerService={peopleSearchSvc} onChangeHandler={props.onChangeHandler} />
+            <DownshiftMultiple addFieldError={props.addFieldError} removeFieldError={props.removeFieldError} required={props.required} singleValue={singleValue} error={props.error} label={props.label} peoplePickerService={peopleSearchSvc} onChangeHandler={props.onChangeHandler} />
         </div>
     );
 }
