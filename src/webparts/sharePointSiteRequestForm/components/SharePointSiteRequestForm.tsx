@@ -77,6 +77,7 @@ const successMessageCss = {
 const initialState = {
   isSubmitted: false,
   isValidForm: false,
+  dirtyFields: [],
   errorMessage: "Please provide a value for all required fields.",
   formState: "missingData",
   formData: {
@@ -113,6 +114,29 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     this.setState({
       formData: { ...this.state.formData, [fieldName]: fieldValue }
     });
+  }
+
+  public handleAddFieldError = (fieldName: string) => {
+    let index = this.state.dirtyFields.indexOf(fieldName);
+    if (index === -1) {
+      this.setState({
+        dirtyFields: [...this.state.dirtyFields, fieldName]
+      });
+    }
+  }
+
+  public handlerRemoveFieldError = (fieldName: string) => {
+    let index = this.state.dirtyFields.indexOf(fieldName);
+    if (index > -1) {
+      let tempArray = [...this.state.dirtyFields];
+
+      tempArray.splice(index, 1);
+      this.setState({
+        dirtyFields: tempArray
+      });
+    }
+
+    
   }
 
   // // Handle some setup after the component mounts
@@ -214,16 +238,16 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         {!this.state.isSubmitted && <br />}
         <TextFieldTemplate label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
 
-        <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"}/>
-        <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"}/>
+        <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"}/>
+        <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"}/>
 
-        <PeoplePickerTemplate label={"Additional Owners"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
+        <PeoplePickerTemplate label={"Additional Owners"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
-        <PeoplePickerTemplate label={"Members"} wpContext={this.props.webpartContext} onChangeHandler={this.handleUserFieldChange} />
+        <PeoplePickerTemplate label={"Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
         <br />
         <div style={buttonWrapperCss}>
-          <Button style={this.getButtonCss()} disabled={!(this.state.formState === "clean") || this.state.loading || this.state.isSubmitted} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
+          <Button style={this.getButtonCss()} disabled={(!(this.state.formState === "clean") || this.state.loading || this.state.isSubmitted) || this.state.dirtyFields.length !== 0} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
           {/* {this.state.loading && <CircularProgress size={24} style={buttonProgressCss} />} */}
         </div>
         {/* {this.state.loading && <FullFormLoader size={24} style={buttonProgressCss} />} */}
