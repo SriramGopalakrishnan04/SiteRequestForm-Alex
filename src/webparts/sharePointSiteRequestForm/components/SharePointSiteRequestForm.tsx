@@ -12,8 +12,8 @@ import green from '@material-ui/core/colors/green';
 import Button from '@material-ui/core/Button';
 
 import TextFieldTemplate from './field-templates/text-field';
-
 import PeoplePickerTemplate from './field-templates/people-picker-template';
+import SingleSelectTemplate from './field-templates/single-select';
 
 import FullFormLoader from './loading-animations/full-form-loader';
 
@@ -245,6 +245,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
         <PeoplePickerTemplate label={"Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
+        <SingleSelectTemplate label={"Something Here"} placeHolder={"Test Holder"} onChangeHandler={() => {console.log('test change')}} />
         <br />
         <div style={buttonWrapperCss}>
           <Button style={this.getButtonCss()} disabled={(!(this.state.formState === "clean") || this.state.loading || this.state.isSubmitted) || this.state.dirtyFields.length !== 0} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
