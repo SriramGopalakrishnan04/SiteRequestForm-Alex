@@ -53,7 +53,15 @@ function createSiteRequest(webPartContext: WebPartContext, formData: any, listNa
     
     return new Promise((resolve, reject) => {
         sp.web.lists.getByTitle(listName).items.add({
-            Title: formData['Title']
+            Title: formData['Title'],
+            SitePurpose: formData['SitePurpose'],
+            SiteLife: formData['SiteLife'],
+            SiteAccess: formData['SiteAccess'],
+            DocumentTypes: formData['DocumentTypes'],
+            CurrentContent: formData['CurrentContent'],
+            RequireMigration: formData['RequireMigration'],
+            TrainingComplete: formData['TrainingComplete'],
+            FirmDivision: formData['FirmDivision']
         }).then(res => {
             res.item.validateUpdateListItem([{
                 FieldName: "PrimaryOwner",

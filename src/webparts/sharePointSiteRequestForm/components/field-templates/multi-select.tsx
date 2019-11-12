@@ -1,8 +1,9 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -11,6 +12,8 @@ import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
 
+import MultilineTextField from './multi-line-text-field';
+
 const styles = (theme: Theme) => createStyles({
   root: {
     display: 'flex',
@@ -18,8 +21,13 @@ const styles = (theme: Theme) => createStyles({
   },
   formControl: {
     margin: theme.spacing.unit,
+    marginTop: theme.spacing.unit * 2,
     minWidth: 120,
     // maxWidth: 300,
+  },
+  inputWithSelection: {
+    paddingTop: 10,
+    paddingBottom: 10
   },
   chips: {
     display: 'flex',
@@ -44,49 +52,78 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
 function getStyles(name, that) {
   return {
     fontWeight:
-      that.state.name.indexOf(name) === -1
+      that.state.value.indexOf(name) === -1
         ? that.props.theme.typography.fontWeightRegular
         : that.props.theme.typography.fontWeightMedium,
   };
 }
 
+export interface Option {
+  value: string;
+  placeHolder: string;
+}
+
 export interface Props extends WithStyles<typeof styles> {
-    label: string;
-    placeHolder: string;
-    
-    onChangeHandler: (fieldName: string, fieldValue: string) => void;
+  label: string;
+  name: string;
+  placeHolder: string;
+  options: Option[];
+  error?: boolean;
+  required?: boolean;
+
+  onChangeHandler: (fieldName: string, fieldValue: string) => void;
 }
 
 export interface State {
-  name: string[];
+  value: string[];
+  labelWidth: number;
+  otherText: string;
 }
 
 class MultipleSelect extends React.Component<Props, State> {
-  state: State = {
-    name: [],
+  public state: State = {
+    value: [],
+    labelWidth: 0,
+    otherText: ''
   };
 
-  handleChange = event => {
-    this.setState({ name: event.target.value });
-  };
+  public componentDidMount() {
+    this.setState({
+      labelWidth: ReactDOM.findDOMNode(this['InputLabelRef'])['offsetWidth'],
+    });
+  }
 
-  handleChangeMultiple = event => {
+  public handleOtherTextChange = (name, value) => {
+    let stateVal = [...this.state.value];
+    // Check for the other option
+    
+    if (stateVal.indexOf("Other") !== -1) {
+      stateVal[stateVal.indexOf("Other")] = `Other-${value}`;
+    }
+    
+    this.setState({
+        otherText: value
+    }, () => {
+        this.props.onChangeHandler(this.props.name, stateVal.toString());
+    });
+}
+
+  public handleChange = event => {
+    this.setState({ value: event.target.value });
+
+    let stateVal = [...event.target.value];
+    // Check for the other option
+    if (stateVal.indexOf("Other") !== -1) {
+      stateVal[stateVal.indexOf("Other")] = `Other-${this.state.otherText}`;
+    }
+
+    this.props.onChangeHandler(this.props.name, stateVal.toString());
+  }
+
+  public handleChangeMultiple = event => {
     const { options } = event.target;
     const value = [];
     for (let i = 0, l = options.length; i < l; i += 1) {
@@ -95,57 +132,34 @@ class MultipleSelect extends React.Component<Props, State> {
       }
     }
     this.setState({
-      name: value,
+      value: value,
     });
-  };
+  }
 
-  render() {
+  public render() {
+    const showTextField = this.state.value.indexOf("Other") !== -1 ? true : false;
+
     const { classes } = this.props;
 
     return (
       <React.Fragment>
-        {/* <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="select-multiple">Name</InputLabel>
+        <FormControl fullWidth error={this.props.error} required={this.props.required} variant="outlined" className={classes.formControl}>
+          <InputLabel
+            ref={ref => {
+              this['InputLabelRef'] = ref; //this is needed for the label when it moves into the border area
+            }}
+            htmlFor="select-multiple-checkbox">{this.props.placeHolder}</InputLabel>
           <Select
             multiple
-            value={this.state.name}
+            value={this.state.value}
             onChange={this.handleChange}
-            input={<Input id="select-multiple" />}
-            MenuProps={MenuProps}
-          >
-            {names.map(name => (
-              <MenuItem key={name} value={name} style={getStyles(name, this)}>
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
-        <FormControl fullWidth variant="outlined" className={classes.formControl}>
-          <InputLabel htmlFor="select-multiple-checkbox">Tag</InputLabel>
-          <Select
-            multiple
-            value={this.state.name}
-            onChange={this.handleChange}
-            input={<Input id="select-multiple-checkbox" />}
-            renderValue={selected => (selected as string[]).join(', ')}
-            MenuProps={MenuProps}
-          >
-            {names.map(name => (
-              <MenuItem key={name} value={name}>
-                <Checkbox checked={this.state.name.indexOf(name) > -1} />
-                <ListItemText primary={name} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth variant="outlined" className={classes.formControl}>
-          <InputLabel htmlFor="select-multiple-chip">Chip</InputLabel>
-          <Select
-            multiple
-            variant="outlined"
-            value={this.state.name}
-            onChange={this.handleChange}
-            input={<Input id="select-multiple-chip" />}
+            SelectDisplayProps={{style: (this.state.value.length !== 0 ? {paddingTop: 10, paddingBottom: 10} : {})}} // This is a hack so that the height matches the other selects after a value is selected
+            input={
+              <OutlinedInput
+                labelWidth={this.state.labelWidth}
+                name={this.props.label}
+              />
+            }
             renderValue={(selected: string[]) => (
               <div className={classes.chips}>
                 {(selected as string[]).map(value => (
@@ -155,39 +169,15 @@ class MultipleSelect extends React.Component<Props, State> {
             )}
             MenuProps={MenuProps}
           >
-            {names.map(name => (
-              <MenuItem key={name} value={name} style={getStyles(name, this)}>
-                {name}
+            {this.props.options.map(option => (
+              <MenuItem key={option.value} value={option.value}>
+                <Checkbox checked={this.state.value.indexOf(option.value) > -1} />
+                <ListItemText primary={option.placeHolder} />
               </MenuItem>
             ))}
           </Select>
         </FormControl>
-        {/* <FormControl className={classNames(classes.formControl, classes.noLabel)}>
-          <Select
-            multiple
-            displayEmpty
-            value={this.state.name}
-            onChange={this.handleChange}
-            input={<Input id="select-multiple-placeholder" />}
-            renderValue={(selected: string[]) => {
-              if ((selected as string[]).length === 0) {
-                return <em>Placeholder</em>;
-              }
-
-              return (selected as string[]).join(', ');
-            }}
-            MenuProps={MenuProps}
-          >
-            <MenuItem disabled value="">
-              <em>Placeholder</em>
-            </MenuItem>
-            {names.map(name => (
-              <MenuItem key={name} value={name} style={getStyles(name, this)}>
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
+        {showTextField && <MultilineTextField onChangeHandler={this.handleOtherTextChange} name="Other" label={`Other:`} />}
       </React.Fragment>
     );
   }

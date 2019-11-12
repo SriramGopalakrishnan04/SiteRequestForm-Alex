@@ -17,6 +17,8 @@ const textFieldInputStyles = {
 
 interface TextFieldTemplateProps {
     label: string;
+    name: string;
+    error?: boolean;
     placeHolder: string;
     required?: boolean;
     multiline?: boolean;
@@ -54,13 +56,13 @@ class TextFieldTemplate extends React.Component<TextFieldTemplateProps> {
             <TextField
                 // This is whack but you have to specify inputProps inside of inputProps to affect the actual 'input'
                 InputProps={{inputProps: {style: textFieldInputStyles}}}
-                error={errorState}
+                error={errorState || this.props.error}
                 required={this.props.required}
                 multiline={this.props.multiline}
                 fullWidth
                 color="primary"
                 onChange={(evt) => {
-                        this.props.onChangeHandler(this.props.label, evt.target.value);
+                        this.props.onChangeHandler(this.props.name, evt.target.value);
                         this.setState({inputValue: evt.target.value});
                     }
                 }

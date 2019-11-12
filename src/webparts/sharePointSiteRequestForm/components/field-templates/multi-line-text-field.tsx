@@ -20,41 +20,54 @@ const styles = (theme: Theme) =>
   });
 
 export interface Props extends WithStyles<typeof styles> {
-    label: string;
-}
-
-export interface State {
+  label: string;
   name: string;
-  age: string;
-  multiline: string;
-  currency: string;
+  error?: boolean;
+  required?: boolean;
+  onChangeHandler: (fieldName: string, fieldValue: string) => void;
 }
 
-class TextFields extends React.Component<Props, State> {
-  state: State = {
-    name: 'Cat in the Hat',
-    age: '',
-    multiline: 'Controlled',
-    currency: 'EUR',
-  };
+// export interface State {
+//   name: string;
+//   age: string;
+//   multiline: string;
+//   currency: string;
+// }
 
-  handleChange = (name: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ [name]: event.target.value } as Pick<State, keyof State>);
-  };
+class TextFields extends React.Component<Props> {
+  // class TextFields extends React.Component<Props, State> {
+  // public state: State = {
+  //   name: 'Cat in the Hat',
+  //   age: '',
+  //   multiline: 'Controlled',
+  //   currency: 'EUR',
+  // };
 
-  render() {
+  // public handleChange = (name: keyof State) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   this.setState({ [name]: event.target.value } as Pick<State, keyof State>);
+  // }
+
+  public render() {
     const { classes } = this.props;
 
     return (
       <React.Fragment>
         <TextField
           id="standard-textarea"
+          defaultValue=""
+          error={this.props.error}
+          required={this.props.required}
           label={this.props.label}
           placeholder=""
           multiline
           fullWidth
           variant="outlined"
           className={classes.textField}
+          onChange={(evt) => {
+            this.props.onChangeHandler(this.props.name, evt.target.value);
+            // this.setState({inputValue: evt.target.value});
+          }
+          }
           margin="normal"
         />
       </React.Fragment>

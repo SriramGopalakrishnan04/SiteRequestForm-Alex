@@ -29,9 +29,11 @@ const singleSelectInputStyles = {
 
 interface SingleSelectTemplateProps {
     label: string;
+    name: string;
     placeHolder: string;
     required?: boolean;
     helpText?: string;
+    error?: boolean;
     // multiline?: boolean;
     onChangeHandler: (fieldName: string, fieldValue: string) => void;
 }
@@ -44,7 +46,8 @@ type DefaultProps = {
 
 const initialState = {
     inputValue: '',
-    labelWidth: 0
+    labelWidth: 0,
+    otherText: ''
 };
 
 type State = Readonly<typeof initialState>;
@@ -57,6 +60,14 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
         multiline: false
     };
 
+    public handleOtherTextChange = (name, value) => {
+        this.setState({
+            otherText: value
+        }, () => {
+            this.props.onChangeHandler(this.props.name, `${this.state.inputValue}-${this.state.otherText}`);
+        });
+    }
+
     public componentDidMount() {
         this.setState({
             labelWidth: ReactDOM.findDOMNode(this['InputLabelRef'])['offsetWidth'],
@@ -64,8 +75,15 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
     }
 
     public handleChange = event => {
-        this.setState({ inputValue: event.target.value });
-        this.props.onChangeHandler(this.props.label, event.target.value);
+        const val = event.target.value;
+
+        if (val === "Other") {
+            this.setState({ inputValue: val });
+            this.props.onChangeHandler(this.props.name, `${val}-${this.state.otherText}`);
+        } else {
+            this.setState({ inputValue: val });
+            this.props.onChangeHandler(this.props.name, val);
+        }
     }
 
     public render() {
@@ -82,7 +100,7 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
             <React.Fragment>
                 
                 
-                <FormControl fullWidth variant="outlined" className={classes.formControl} style={singleSelectStyles}>
+                <FormControl fullWidth variant="outlined" className={classes.formControl} style={singleSelectStyles} error={this.props.error} required={this.props.required}>
                     <InputLabel
                         ref={ref => {
                             this['InputLabelRef'] = ref; //this is needed for the label when it moves into the border area
@@ -105,7 +123,7 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
                     </Select>
                     {this.props.helpText && <FormHelperText>{this.props.helpText}</FormHelperText>}
                 </FormControl>
-                {showTextField && <MultilineTextField label={`Please elaborate  `} />}
+                {showTextField && <MultilineTextField onChangeHandler={this.handleOtherTextChange} name="Other" label={`Other:`} />}
             </React.Fragment>
         );
     }

@@ -52,7 +52,7 @@ const styles = {
 };
 
 function renderInput(inputProps) {
-    const { InputProps, classes, ref, ...other } = inputProps;
+    const { InputProps, classes, ref, helperText, ...other } = inputProps;
 
     return (
         <TextField
@@ -60,6 +60,7 @@ function renderInput(inputProps) {
             margin="normal"
             variant='outlined'
             required={InputProps.required}
+            helperText={helperText}
             InputProps={{
                 inputRef: ref,
                 style: classes.selectBox,
@@ -117,7 +118,7 @@ const initialState = {
 
 type State = Readonly<typeof initialState>;
 
-class DownshiftMultiple extends React.Component<{ required?: boolean; singleValue?: boolean; error?: boolean; peoplePickerService: PeopleSearchService; label: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void; addFieldError: (fieldName: string) => void; removeFieldError: (fieldName: string) => void; }> {
+class DownshiftMultiple extends React.Component<{ required?: boolean; singleValue?: boolean; error?: boolean; helpText?: string; peoplePickerService: PeopleSearchService; label: string; name: string; onChangeHandler: (fieldName: string, fieldValue: string[]) => void; addFieldError: (fieldName: string) => void; removeFieldError: (fieldName: string) => void; }> {
     public readonly state: State = initialState;
 
     // Get the suggestions from the peopleSuggestions state value. Limit to 5?
@@ -177,7 +178,7 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
             selectedItem = [...selectedItem, item];
         }
 
-        this.props.onChangeHandler(this.props.label, selectedItem);
+        this.props.onChangeHandler(this.props.name, selectedItem);
 
         this.setState({
             inputValue: '',
@@ -241,11 +242,12 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
                             {renderInput({
                                 fullWidth: true,
                                 classes,
-
+                                helperText:this.props.helpText,
                                 InputProps: getInputProps({
                                     error: errorState,
                                     disabled: inputDisabled,
                                     required: this.props.required,
+                                    
                                     startAdornment: selectedItem.map(item => {
                                         return (
                                             <Chip
@@ -297,7 +299,7 @@ function PeoplePickerTemplate(props) {
 
     return (
         <div style={classes.root}>
-            <DownshiftMultiple addFieldError={props.addFieldError} removeFieldError={props.removeFieldError} required={props.required} singleValue={singleValue} error={props.error} label={props.label} peoplePickerService={peopleSearchSvc} onChangeHandler={props.onChangeHandler} />
+            <DownshiftMultiple name={props.name} helpText={props.helpText} addFieldError={props.addFieldError} removeFieldError={props.removeFieldError} required={props.required} singleValue={singleValue} error={props.error} label={props.label} peoplePickerService={peopleSearchSvc} onChangeHandler={props.onChangeHandler} />
         </div>
     );
 }
