@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 
 const textFieldCss = {
     // width: '80%',
-    minWidth: '200px',
+    // minWidth: '200px',
     marginLeft: '8px',
     marginRight: '8px'
 };

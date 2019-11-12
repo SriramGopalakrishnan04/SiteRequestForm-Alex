@@ -9,9 +9,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 
+import MultilineTextField from './multi-line-text-field';
+
 const singleSelectStyles = {
     // width: '80%',
-    minWidth: '200px',
+    // minWidth: '200px',
     marginLeft: '8px',
     marginRight: '8px',
     marginTop: '16px',
@@ -29,6 +31,7 @@ interface SingleSelectTemplateProps {
     label: string;
     placeHolder: string;
     required?: boolean;
+    helpText?: string;
     // multiline?: boolean;
     onChangeHandler: (fieldName: string, fieldValue: string) => void;
 }
@@ -54,18 +57,20 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
         multiline: false
     };
 
-    componentDidMount() {
+    public componentDidMount() {
         this.setState({
             labelWidth: ReactDOM.findDOMNode(this['InputLabelRef'])['offsetWidth'],
         });
     }
 
-    handleChange = event => {
+    public handleChange = event => {
         this.setState({ inputValue: event.target.value });
-    };
+        this.props.onChangeHandler(this.props.label, event.target.value);
+    }
 
-    render() {
-        // const { classes } = this.props;
+    public render() {
+        const showTextField = this.state.inputValue === "Other" ? true : false;
+
         const classes = {
             root:"nnn",
             formControl: 'nnn',
@@ -82,9 +87,9 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
                         ref={ref => {
                             this['InputLabelRef'] = ref; //this is needed for the label when it moves into the border area
                         }}
-                        htmlFor="outlined-age-simple"
+                        htmlFor={`field-${this.props.label}`}
                     >
-                        Age
+                        {this.props.placeHolder}
                     </InputLabel>
                     <Select
                         value={this.state.inputValue}
@@ -92,19 +97,15 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
                         input={
                             <OutlinedInput
                                 labelWidth={this.state.labelWidth}
-                                name="age"
-                                id="outlined-age-simple"
+                                name={this.props.label}
                             />
                         }
                     >
-                        <MenuItem value="">
-                            <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {this.props.children}
                     </Select>
+                    {this.props.helpText && <FormHelperText>{this.props.helpText}</FormHelperText>}
                 </FormControl>
+                {showTextField && <MultilineTextField label={`Please elaborate  `} />}
             </React.Fragment>
         );
     }

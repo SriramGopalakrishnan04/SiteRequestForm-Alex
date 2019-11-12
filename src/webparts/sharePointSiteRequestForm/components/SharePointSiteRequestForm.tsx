@@ -11,9 +11,14 @@ import green from '@material-ui/core/colors/green';
 
 import Button from '@material-ui/core/Button';
 
+import MenuItem from '@material-ui/core/MenuItem';
+
+
 import TextFieldTemplate from './field-templates/text-field';
 import PeoplePickerTemplate from './field-templates/people-picker-template';
 import SingleSelectTemplate from './field-templates/single-select';
+import MultiSelectTemplate from './field-templates/multi-select';
+import MultilineTextTemplate from './field-templates/multi-line-text-field';
 
 import FullFormLoader from './loading-animations/full-form-loader';
 
@@ -136,7 +141,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
       });
     }
 
-    
+
   }
 
   // // Handle some setup after the component mounts
@@ -238,14 +243,38 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         {!this.state.isSubmitted && <br />}
         <TextFieldTemplate label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
 
-        <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"}/>
-        <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"}/>
+        <PeoplePickerTemplate label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
+        
+        <PeoplePickerTemplate label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
 
         <PeoplePickerTemplate label={"Additional Owners"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
         <PeoplePickerTemplate label={"Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
-        <SingleSelectTemplate label={"Something Here"} placeHolder={"Test Holder"} onChangeHandler={() => {console.log('test change')}} />
+        <MultiSelectTemplate label={"Access"} placeHolder={"Who will access your site and it's associated content?"} onChangeHandler={() => { console.log('test change'); }} >
+          <MenuItem value="Public">Public Content</MenuItem>
+          <MenuItem value="Division">Firm Division</MenuItem>
+          <MenuItem value="Department">My Department</MenuItem>
+          <MenuItem value="Team">My Team</MenuItem>
+          <MenuItem value="Project">My Project Team</MenuItem>
+          <MenuItem value="Community">My Community Group</MenuItem>
+          <MenuItem value="Other">Other</MenuItem>
+        </MultiSelectTemplate>
+
+        <SingleSelectTemplate label={"Site Life"} placeHolder={"How long will you be using the site?"} onChangeHandler={() => { console.log('test change'); }} >
+          <MenuItem value="0-6">0-6 Months</MenuItem>
+          <MenuItem value="6-12">6-12 Months</MenuItem>
+          <MenuItem value="12-18">12-18 Months</MenuItem>
+          <MenuItem value="indefinite">Indefinite</MenuItem>
+        </SingleSelectTemplate>
+
+        <SingleSelectTemplate label={"Document Types"} placeHolder={"Content/Document Types"} helpText="What type of content or documents will you be working on?" onChangeHandler={() => { console.log('test change'); }} >
+          <MenuItem value="Web">Web Content</MenuItem>
+          <MenuItem value="XDrive">X: Drive</MenuItem>
+          <MenuItem value="Other">Other</MenuItem>
+        </SingleSelectTemplate>
+
+        <MultilineTextTemplate label="What is the purpose of the site?"/>
         <br />
         <div style={buttonWrapperCss}>
           <Button style={this.getButtonCss()} disabled={(!(this.state.formState === "clean") || this.state.loading || this.state.isSubmitted) || this.state.dirtyFields.length !== 0} variant="outlined" color="primary" onClick={() => { this.handleRequestButtonClick(); }}>Submit</Button>
@@ -270,19 +299,19 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
             <FullFormLoader active={this.state.loading} complete={this.state.isSubmitted} warning={!this.state.isConfigured} warningMessage="The webpart is not configured" />
 
             {/* <div> */}
+            {/* <div> */}
+            <div className={styles.row}>
               {/* <div> */}
-              <div className={styles.row}>
-                {/* <div> */}
-                <div className={styles.column}>
-                  <span className={styles.title}>SharePoint Team Site Request</span>
+              <div className={styles.column}>
+                <span className={styles.title}>SharePoint Team Site Request</span>
 
-                  <p className={styles.description}>{this.state.errorMessage}&nbsp;</p>
+                <p className={styles.description}>{this.state.errorMessage}&nbsp;</p>
 
 
-                  {this.renderFormBody()}
+                {this.renderFormBody()}
 
-                </div>
               </div>
+            </div>
           </Paper>
 
         </div>
