@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Check from '@material-ui/icons/Check';
 import Warning from '@material-ui/icons/Warning';
@@ -6,6 +7,51 @@ import Fade from '@material-ui/core/Fade';
 import Zoom from '@material-ui/core/Zoom';
 import green from '@material-ui/core/colors/green';
 import red from '@material-ui/core/colors/red';
+
+let isDismissed = false;
+
+const buttonWrapperCss = {
+    margin: 8,
+    position: 'relative',
+    marginLeft: 'auto',
+    marginRight: 'auto'
+} as React.CSSProperties;
+
+
+const buttonBaseCss = {
+    margin: 8
+} as React.CSSProperties;
+
+const fullScreenContainerCompleteCss = {
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    display: 'flex',
+    background: green[500],
+    opacity: 1,
+    transition: 'opacity 0.3s ease 0s, background 0.3s ease 0s',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    zIndex: 99
+} as React.CSSProperties;
+
+
+const fullScreenContainerVisibleCss = {
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    zIndex: 99,
+    display: 'flex',
+    background: 'rgba(51,51,51,0.5)',
+    opacity: 1,
+    transition: 'opacity 0.3s ease 0s',
+    flexDirection: 'column',
+    justifyContent: 'center'
+} as React.CSSProperties;
 
 const fullFormContainerHiddenCss = {
     width: '100%',
@@ -16,7 +62,8 @@ const fullFormContainerHiddenCss = {
     opacity: 0,
     transition: 'opacity 0.3s ease 0s',
     flexDirection: 'column',
-    pointerEvents: 'none'
+    pointerEvents: 'none',
+    justifyContent: 'center'
 } as React.CSSProperties;
 
 const fullFormContainerVisibleCss = {
@@ -28,7 +75,8 @@ const fullFormContainerVisibleCss = {
     background: 'rgba(51,51,51,0.5)',
     opacity: 1,
     transition: 'opacity 0.3s ease 0s',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    justifyContent: 'center'
 } as React.CSSProperties;
 
 const fullFormContainerCompleteCss = {
@@ -40,7 +88,8 @@ const fullFormContainerCompleteCss = {
     background: green[500],
     opacity: 1,
     transition: 'opacity 0.3s ease 0s, background 0.3s ease 0s',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    justifyContent: 'center'
 } as React.CSSProperties;
 
 const fullFormContainerWarningCss = {
@@ -52,7 +101,8 @@ const fullFormContainerWarningCss = {
     background: red[500],
     opacity: 1,
     transition: 'opacity 0.3s ease 0s, background 0.3s ease 0s',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    justifyContent: 'center'
 } as React.CSSProperties;
 
 const spinnerCss = {
@@ -61,10 +111,12 @@ const spinnerCss = {
 } as React.CSSProperties;
 
 const checkCss = {
-    margin: 'auto',
-    width: '50%',
-    height: '50%',
-    flex: 3,
+    margin: 8,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    width: 200,
+    height: 200,
+    // flex: 3,
     zIndex: 101
 } as React.CSSProperties;
 
@@ -74,50 +126,95 @@ const messageCss = {
     zIndex: 101
 } as React.CSSProperties;
 
-const getCssProps = (props) => {
-    if (props.warning) {
+const getCssProps = (props, state) => {
+    if (state.isDismissed) {
+        return fullFormContainerCompleteCss;
+    } else if (props.warning) {
         return fullFormContainerWarningCss;
     } else if (props.complete) {
-        return fullFormContainerCompleteCss;
+        if (props.fullScreen) {
+            return fullScreenContainerCompleteCss;
+        } else {
+            return fullFormContainerCompleteCss;
+        }
     } else if (props.active) {
-        return fullFormContainerVisibleCss;
+        if (props.fullScreen) {
+            return fullScreenContainerVisibleCss;
+        } else {
+            return fullFormContainerVisibleCss;
+        }
     } else {
         return fullFormContainerHiddenCss;
     }
 };
 
-const FullFormLoader = (props) => {
-    const currentCssProps = getCssProps(props);
-    return (
-        <div>
-            <Fade in={!props.complete && props.active} mountOnEnter={true} unmountOnExit={true}>
-                <div style={currentCssProps}>
-                    <Fade in={!props.complete && props.active}>
-                        <CircularProgress style={spinnerCss} size={100} />
-                    </Fade>
-                </div>
-            </Fade>
-            <Fade in={props.complete} mountOnEnter={true} unmountOnExit={true}>
-                <div style={currentCssProps}>
-                    <Zoom in={props.complete}>
-                        <Check color="primary" style={checkCss} />
-                    </Zoom>
-                </div>
-            </Fade>
-            <Fade in={props.warning} mountOnEnter={true} unmountOnExit={true}>
-                <div style={currentCssProps}>
-                    <Zoom in={props.warning}>
-                        <Warning color="primary" style={checkCss} />
-                    </Zoom>
-                    <Fade in={props.warning}>
-                        <div style={messageCss}>
-                            {props.warningMessage}
-                        </div>
-                    </Fade>
-                </div>
-            </Fade>
-        </div>
-    );
-};
+export interface Props {
+    complete: boolean;
+    active: boolean;
+    warning: boolean;
+    warningMessage?: string;
+    successMessage?: string;
+    fullScreen?: boolean;
+}
+
+export interface State {
+    isDismissed: boolean;
+  }
+
+
+class FullFormLoader extends React.Component<Props, State> {
+    public state: State = {
+        isDismissed: false
+      };
+
+    private dismissNotification = () => {
+        this.setState({
+            isDismissed: true
+        });
+    }
+
+    public render() {
+        const currentCssProps = getCssProps(this.props, this.state);
+        return (
+            <div>
+                <Fade in={!this.props.complete && this.props.active} mountOnEnter={true} unmountOnExit={true}>
+                    <div style={currentCssProps}>
+                        <Fade in={!this.props.complete && this.props.active}>
+                            <CircularProgress style={spinnerCss} size={100} />
+                        </Fade>
+                    </div>
+                </Fade>
+                <Fade in={this.props.complete} mountOnEnter={true} unmountOnExit={true}>
+                    <div style={currentCssProps}>
+                        <Zoom in={this.props.complete}>
+                            <Check color="primary" style={checkCss} />
+                        </Zoom>
+                        <Fade in={this.props.complete}>
+                            <div style={{ textAlign: 'center', paddingLeft: 20, paddingRight: 20 }}>
+                                {this.props.successMessage}
+                            </div>
+                        </Fade>
+                        {this.props.fullScreen && !this.state.isDismissed && <div style={buttonWrapperCss}>
+                            <Button style={buttonBaseCss} variant="outlined" color="primary" onClick={() => { this.dismissNotification(); }}>Dismiss</Button>
+                        </div>}
+                    </div>
+                </Fade>
+                <Fade in={this.props.warning} mountOnEnter={true} unmountOnExit={true}>
+                    <div style={currentCssProps}>
+                        <Zoom in={this.props.warning}>
+                            <Warning color="primary" style={{ width: 200, height: 200, marginLeft: 'auto', marginRight: 'auto' }} />
+                        </Zoom>
+                        <Fade in={this.props.warning}>
+                            <div style={{ textAlign: 'center' }}>
+                                {this.props.warningMessage}
+                            </div>
+                        </Fade>
+                    </div>
+                </Fade>
+
+            </div>
+        );
+    }
+}
 
 export default FullFormLoader;

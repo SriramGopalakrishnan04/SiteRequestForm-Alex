@@ -16,6 +16,7 @@ import "@pnp/polyfill-ie11";
 
 export interface ISharePointSiteRequestFormWebPartProps {
   listName: string;
+  successMessage: string;
 }
 
 export default class SharePointSiteRequestFormWebPart extends BaseClientSideWebPart<ISharePointSiteRequestFormWebPartProps> {
@@ -25,6 +26,7 @@ export default class SharePointSiteRequestFormWebPart extends BaseClientSideWebP
       SharePointSiteRequestForm,
       {
         listName: this.properties.listName,
+        successMessage: this.properties.successMessage,
         webpartContext: this.context
       }
     );
@@ -53,7 +55,10 @@ export default class SharePointSiteRequestFormWebPart extends BaseClientSideWebP
               groupFields: [
                 PropertyPaneTextField('listName', {
                   label: strings.DescriptionFieldLabel
-                })
+                }),
+                PropertyPaneTextField('successMessage', {
+                  label: "Success Message"
+                }),
               ]
             }
           ]

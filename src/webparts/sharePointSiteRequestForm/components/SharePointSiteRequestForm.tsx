@@ -246,81 +246,84 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
       <form style={containerCss} noValidate autoComplete="off">
         {this.state.isSubmitted && <div style={successMessageCss}>Your site request has been submitted.</div>}
         {!this.state.isSubmitted && <br />}
-        <TextFieldTemplate name="TeamName" label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
+        <React.Fragment>
+          <TextFieldTemplate name="TeamName" label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
 
-        <PeoplePickerTemplate name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
+          <PeoplePickerTemplate name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
 
-        <PeoplePickerTemplate name="SecondaryOwner" label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
+          <PeoplePickerTemplate name="SecondaryOwner" label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
 
-        <PeoplePickerTemplate helpText="Optional: Owners can add new owners after the site is created." name="AdditionalOwners" label={"Additional Owners"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
+          <PeoplePickerTemplate helpText="Optional: Owners can add new owners after the site is created." name="AdditionalOwners" label={"Additional Owners"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
-        <PeoplePickerTemplate helpText="Optional: Owners can add new members after the site is created." name="Members" label={"Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
+          <PeoplePickerTemplate helpText="Optional: Owners can add new members after the site is created." name="Members" label={"Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
-        <MultilineTextTemplate name="SitePurpose" label="What is the purpose of the site?" onChangeHandler={this.handleTextChange} required error={this.state.formData.SitePurpose.length === 0} />
+          <MultilineTextTemplate name="SitePurpose" label="What is the purpose of the site?" onChangeHandler={this.handleTextChange} required error={this.state.formData.SitePurpose.length === 0} />
 
-        <MultiSelectTemplate required options={
-          [
-            { value: "Public", placeHolder: "Public Content" },
-            { value: "Division", placeHolder: "Firm Division" },
-            { value: "Department", placeHolder: "My Department" },
-            { value: "Team", placeHolder: "My Team" },
-            { value: "Project", placeHolder: "My Project Team" },
-            { value: "Community", placeHolder: "My Community Group" },
-            { value: "Other", placeHolder: "Other" },
-          ]
-        }
-          name="SiteAccess" label={"Access"} placeHolder={"Who will access your site and it's associated content?"} error={this.state.formData.SiteAccess.length === 0} onChangeHandler={this.handleTextChange}
-        />
-
-        <SingleSelectTemplate name="SiteLife" label={"Site Life"} placeHolder={"How long will you be using the site?"} required error={this.state.formData.SiteLife.length === 0} onChangeHandler={this.handleTextChange} >
-          <MenuItem value="0-6">0-6 Months</MenuItem>
-          <MenuItem value="6-12">6-12 Months</MenuItem>
-          <MenuItem value="12-18">12-18 Months</MenuItem>
-          <MenuItem value="indefinite">Indefinite</MenuItem>
-        </SingleSelectTemplate>
-
-        <MultiSelectTemplate
-          options={
+          <MultiSelectTemplate required options={
             [
-              { value: "Web Content", placeHolder: "Web Content" },
-              { value: "XDrive", placeHolder: "X: Drive" },
-              { value: "Other", placeHolder: "Other" }
+              { value: "Public", placeHolder: "Public Content" },
+              { value: "Division", placeHolder: "Firm Division" },
+              { value: "Department", placeHolder: "My Department" },
+              { value: "Team", placeHolder: "My Team" },
+              { value: "Project", placeHolder: "My Project Team" },
+              { value: "Community", placeHolder: "My Community Group" },
+              { value: "Other", placeHolder: "Other" },
             ]
           }
-          name="DocumentTypes" label={"Document Types"} placeHolder={"What type of content or documents will you be working on?"} required error={this.state.formData.DocumentTypes.length === 0} onChangeHandler={this.handleTextChange} />
+            name="SiteAccess" label={"Access"} placeHolder={"Who will access your site and it's associated content?"} error={this.state.formData.SiteAccess.length === 0} onChangeHandler={this.handleTextChange}
+          />
 
-        <MultilineTextTemplate name="CurrentContent" label="Where does your content currently reside and how is it organized?" required error={this.state.formData.CurrentContent.length === 0} onChangeHandler={this.handleTextChange} />
+          <SingleSelectTemplate name="SiteLife" label={"Site Life"} placeHolder={"How long will you be using the site?"} required error={this.state.formData.SiteLife.length === 0} onChangeHandler={this.handleTextChange} >
+            <MenuItem value="0-6">0-6 Months</MenuItem>
+            <MenuItem value="6-12">6-12 Months</MenuItem>
+            <MenuItem value="12-18">12-18 Months</MenuItem>
+            <MenuItem value="indefinite">Indefinite</MenuItem>
+          </SingleSelectTemplate>
 
-        <SingleSelectTemplate name="RequireMigration" label={"Require Migration"} placeHolder={"Will you require content be migrated?"} required error={this.state.formData.RequireMigration.length === 0} onChangeHandler={this.handleTextChange} >
-          <MenuItem value="No">No</MenuItem>
-          <MenuItem value="Yes">Yes</MenuItem>
-        </SingleSelectTemplate>
+          <MultiSelectTemplate
+            options={
+              [
+                { value: "Web Content", placeHolder: "Web Content" },
+                { value: "XDrive", placeHolder: "X: Drive" },
+                { value: "Other", placeHolder: "Other" }
+              ]
+            }
+            name="DocumentTypes" label={"Document Types"} placeHolder={"What type of content or documents will you be working on?"} required error={this.state.formData.DocumentTypes.length === 0} onChangeHandler={this.handleTextChange} />
 
-        <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is owner training completed?"} required error={this.state.formData.TrainingComplete.length === 0} helpText='Have the Primary and Secondary Owners attended the mandatory "Introduction to SharePoint at Jones" training?' onChangeHandler={this.handleTextChange} >
-          <MenuItem value="No">No</MenuItem>
-          <MenuItem value="Yes">Yes</MenuItem>
-        </SingleSelectTemplate>
+          <MultilineTextTemplate name="CurrentContent" label="Where does your content currently reside and how is it organized?" required error={this.state.formData.CurrentContent.length === 0} onChangeHandler={this.handleTextChange} />
 
-        <SingleSelectTemplate name="FirmDivision" placeHolder="What Firm Division will your site be associated with?" label="" required error={this.state.formData.FirmDivision.length === 0} onChangeHandler={this.handleTextChange} >
-          <MenuItem value="BOA Talent Acquisition Performance">BOA Talent Acquisition & Performance</MenuItem>
-          <MenuItem value="Branch Administration">Branch Administration</MenuItem>
-          <MenuItem value="Branch Region Development">Branch & Region Development</MenuItem>
-          <MenuItem value="Branch Training">Branch Training</MenuItem>
-          <MenuItem value="Canada">Canada</MenuItem>
-          <MenuItem value="Compliance">Compliance</MenuItem>
-          <MenuItem value="FA Talent Acquisition">FA Talent Acquisition</MenuItem>
-          <MenuItem value="Finance">Finance</MenuItem>
-          <MenuItem value="HR">Human Resources</MenuItem>
-          <MenuItem value="Internal Audit">Internal Audit</MenuItem>
-          <MenuItem value="IS">Information Systems</MenuItem>
-          <MenuItem value="Legal">Legal</MenuItem>
-          <MenuItem value="Marketing">Marketing</MenuItem>
-          <MenuItem value="Operations">Operations</MenuItem>
-          <MenuItem value="Product Review">Product Review</MenuItem>
-          <MenuItem value="Products Services">Products & Services</MenuItem>
-          <MenuItem value="Service">Service</MenuItem>
-          <MenuItem value="Solutions">Solutions</MenuItem>
-        </SingleSelectTemplate>
+          <SingleSelectTemplate name="RequireMigration" label={"Require Migration"} placeHolder={"Will you require content be migrated?"} required error={this.state.formData.RequireMigration.length === 0} onChangeHandler={this.handleTextChange} >
+            <MenuItem value="No">No</MenuItem>
+            <MenuItem value="Yes">Yes</MenuItem>
+          </SingleSelectTemplate>
+
+          <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is owner training completed?"} required error={this.state.formData.TrainingComplete.length === 0} helpText='Have the Primary and Secondary Owners attended the mandatory "Introduction to SharePoint at Jones" training?' onChangeHandler={this.handleTextChange} >
+            <MenuItem value="No">No</MenuItem>
+            <MenuItem value="Yes">Yes</MenuItem>
+          </SingleSelectTemplate>
+
+          <SingleSelectTemplate name="FirmDivision" placeHolder="What Firm Division will your site be associated with?" label="" required error={this.state.formData.FirmDivision.length === 0} onChangeHandler={this.handleTextChange} >
+            <MenuItem value="BOA Talent Acquisition Performance">BOA Talent Acquisition & Performance</MenuItem>
+            <MenuItem value="Branch Administration">Branch Administration</MenuItem>
+            <MenuItem value="Branch Region Development">Branch & Region Development</MenuItem>
+            <MenuItem value="Branch Training">Branch Training</MenuItem>
+            <MenuItem value="Canada">Canada</MenuItem>
+            <MenuItem value="Compliance">Compliance</MenuItem>
+            <MenuItem value="FA Talent Acquisition">FA Talent Acquisition</MenuItem>
+            <MenuItem value="Finance">Finance</MenuItem>
+            <MenuItem value="HR">Human Resources</MenuItem>
+            <MenuItem value="Internal Audit">Internal Audit</MenuItem>
+            <MenuItem value="IS">Information Systems</MenuItem>
+            <MenuItem value="Legal">Legal</MenuItem>
+            <MenuItem value="Marketing">Marketing</MenuItem>
+            <MenuItem value="Operations">Operations</MenuItem>
+            <MenuItem value="Product Review">Product Review</MenuItem>
+            <MenuItem value="Products Services">Products & Services</MenuItem>
+            <MenuItem value="Service">Service</MenuItem>
+            <MenuItem value="Solutions">Solutions</MenuItem>
+          </SingleSelectTemplate>
+        </React.Fragment>
+
 
         <br />
         <div style={buttonWrapperCss}>
@@ -340,9 +343,9 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
       <MuiThemeProvider theme={blueTheme}>
 
         {/* <div> */}
-        <div className={styles.oneDriveForm}>
+        <div className={styles.oneDriveForm} style={this.state.isSubmitted ? {height: 600, overflow: 'hidden'} : {}}>
           <Paper>
-            <FullFormLoader active={this.state.loading} complete={this.state.isSubmitted} warning={!this.state.isConfigured} warningMessage="The webpart is not configured" />
+            <FullFormLoader active={this.state.loading} complete={this.state.isSubmitted} warning={!this.state.isConfigured} successMessage={this.props.successMessage} fullScreen warningMessage="The webpart is not configured" />
 
             {/* <div> */}
             {/* <div> */}
