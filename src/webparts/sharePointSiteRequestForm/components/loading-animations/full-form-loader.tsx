@@ -12,7 +12,8 @@ let isDismissed = false;
 
 const buttonWrapperCss = {
     margin: 8,
-    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
     marginLeft: 'auto',
     marginRight: 'auto'
 } as React.CSSProperties;
@@ -106,7 +107,14 @@ const fullFormContainerWarningCss = {
 } as React.CSSProperties;
 
 const spinnerCss = {
-    margin: 'auto',
+    // margin: 'auto',
+    // zIndex: 101,
+    margin: 8,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    width: 200,
+    height: 200,
+    // flex: 3,
     zIndex: 101
 } as React.CSSProperties;
 
@@ -159,18 +167,38 @@ export interface Props {
 
 export interface State {
     isDismissed: boolean;
-  }
+}
 
 
 class FullFormLoader extends React.Component<Props, State> {
     public state: State = {
         isDismissed: false
-      };
+    };
 
     private dismissNotification = () => {
         this.setState({
             isDismissed: true
         });
+    }
+
+    private addStylesheetRules() {
+        var styleEl = document.createElement('style');
+
+        // Append <style> element to <head>
+        document.head.appendChild(styleEl);
+
+        styleEl.id = "spfx-full-form-loader-hack";
+        // Grab style element's sheet
+        var styleSheet = styleEl.sheet;
+
+        // console.log(styleSheet.insertRule)
+        // Insert CSS Rule
+        styleSheet["insertRule"]('.Canvas-slideUpIn {opacity: 1 !important; animation-fill-mode: unset !important}', 0);
+
+    }
+
+    public componentDidMount() {
+        this.addStylesheetRules();
     }
 
     public render() {
