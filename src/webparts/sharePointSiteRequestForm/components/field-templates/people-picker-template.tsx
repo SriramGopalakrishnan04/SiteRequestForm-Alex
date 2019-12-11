@@ -74,7 +74,7 @@ function renderInput(inputProps) {
 
 function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, selectedItem }) {
     const isHighlighted = highlightedIndex === index;
-
+    console.log(suggestion);
     let isSelected = false;
     for (let item of selectedItem) {
         if (item.Key === suggestion.Key) {
@@ -97,7 +97,7 @@ function renderSuggestion({ suggestion, index, itemProps, highlightedIndex, sele
                     display: 'block'
                 }}
             >
-                {`${suggestion.DisplayText} | ${suggestion.Description}`}
+                {`${suggestion.DisplayText} | ${suggestion.EntityData.Title || "No Team Name Found"}`}
             </MenuItem>
         );
     } else {
