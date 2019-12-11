@@ -247,15 +247,15 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         {this.state.isSubmitted && <div style={successMessageCss}>Your site request has been submitted.</div>}
         {!this.state.isSubmitted && <br />}
         <React.Fragment>
-          <TextFieldTemplate name="TeamName" label="Team Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
+          <TextFieldTemplate name="TeamName" label="Desired Site Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
 
-          <PeoplePickerTemplate name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
+          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
 
-          <PeoplePickerTemplate name="SecondaryOwner" label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
+          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="SecondaryOwner" label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
 
-          <PeoplePickerTemplate helpText="Optional: Owners can add new owners after the site is created." name="AdditionalOwners" label={"Additional Owners"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
+          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number. Optional: Owners can add new owners after the site is created." name="AdditionalOwners" label={"Additional Owners"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
-          <PeoplePickerTemplate helpText="Optional: Owners can add new members after the site is created." name="Members" label={"Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
+          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number. Optional: Owners can add new members after the site is created." name="Members" label={"Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
           <MultilineTextTemplate name="SitePurpose" label="What is the purpose of the site?" onChangeHandler={this.handleTextChange} required error={this.state.formData.SitePurpose.length === 0} />
 
