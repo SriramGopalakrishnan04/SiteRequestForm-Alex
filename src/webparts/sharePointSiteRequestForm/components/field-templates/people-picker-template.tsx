@@ -53,7 +53,7 @@ const styles = {
 
 function renderInput(inputProps) {
     const { InputProps, classes, ref, helperText, ...other } = inputProps;
-    console.log("other", other, InputProps);
+    
     return (
         <TextField
             // fullWidth
