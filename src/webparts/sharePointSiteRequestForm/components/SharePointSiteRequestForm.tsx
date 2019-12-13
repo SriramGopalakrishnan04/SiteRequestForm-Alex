@@ -1,12 +1,9 @@
 import * as React from 'react';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 
 import amber from '@material-ui/core/colors/amber';
 import grey from '@material-ui/core/colors/grey';
-// import blue from '@material-ui/core/colors/blue';
-// import yellow from '@material-ui/core/colors/yellow';
 import green from '@material-ui/core/colors/green';
 
 import Button from '@material-ui/core/Button';
