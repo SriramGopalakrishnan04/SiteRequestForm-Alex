@@ -31,7 +31,7 @@ const blueTheme = createMuiTheme({
   palette: {
     primary: amber,
     secondary: grey,
-    type: "dark"
+    type: "light"
   },
 });
 
@@ -344,7 +344,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
         {/* <div> */}
         <div className={styles.oneDriveForm} style={this.state.isSubmitted ? {height: 600, overflow: 'hidden'} : {}}>
-          <Paper>
+          {/* <Paper> */}
             <FullFormLoader active={this.state.loading} complete={this.state.isSubmitted} warning={!this.state.isConfigured} successMessage={this.props.successMessage} fullScreen warningMessage="The webpart is not configured" />
 
             {/* <div> */}
@@ -361,7 +361,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
               </div>
             </div>
-          </Paper>
+          {/* </Paper> */}
 
         </div>
       </MuiThemeProvider>

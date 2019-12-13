@@ -2,6 +2,8 @@
 
 .oneDriveForm {
   position: 'relative';
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
 
   .row {
     @include ms-Grid-row;
@@ -34,6 +36,7 @@
     // @include ms-fontColor-white;
     color: #f44336;
     margin-bottom: 0px;
+    font-weight: 400;
   }
 
   .button {
