@@ -182,6 +182,13 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     });
   }
 
+  private setTrainingNeeded() {
+    this.setState({
+      errorMessage: "Owners need to complete training before requesting a site.",
+      formState: "trainingNeeded"
+    })
+  }
+
   private setMissingDataMessage() {
     this.setState({
       errorMessage: "Please provide a value for all required fields.",
@@ -200,6 +207,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   private validateFormData() {
     const isMissingRequiredData = this.state.formData["TeamName"].length === 0 || this.state.formData["PrimaryOwner"].length !== 1 || this.state.formData["SecondaryOwner"].length !== 1 || this.state.formData.CurrentContent.length === 0 || this.state.formData.DocumentTypes.length === 0 || this.state.formData.FirmDivision.length === 0 || this.state.formData.RequireMigration.length === 0 || this.state.formData.SiteAccess.length === 0 || this.state.formData.SiteLife.length === 0 || this.state.formData.SitePurpose.length === 0 || this.state.formData.TrainingComplete.length === 0;
     const hasMatchingPrimarySecondary = (this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]));
+    const isTrainingCompleted = this.state.formData["TrainingComplete"] === "Yes";
     if (isMissingRequiredData) {
       if (this.state.formState !== "missingData") {
         this.setMissingDataMessage();
@@ -207,6 +215,10 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     } else if (hasMatchingPrimarySecondary) {
       if (this.state.formState !== "ownersMatch") {
         this.setOwnerConflictErrorMessage();
+      }
+    } else if (!isTrainingCompleted) {
+      if (this.state.formState !== "trainingNeeded") {
+        this.setTrainingNeeded();
       }
     } else if (this.state.formState !== "clean") {
       this.clearErrorState();
@@ -246,9 +258,9 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         <React.Fragment>
           <TextFieldTemplate name="TeamName" label="Desired Site Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
 
-          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
+          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
 
-          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="SecondaryOwner" label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={this.state.formState === "ownersMatch"} />
+          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="SecondaryOwner" label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
 
           <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number. Optional: Owners can add new owners after the site is created." name="AdditionalOwners" label={"Additional Owners"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
@@ -294,7 +306,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
             <MenuItem value="Yes">Yes</MenuItem>
           </SingleSelectTemplate>
 
-          <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is owner training completed?"} required error={this.state.formData.TrainingComplete.length === 0} helpText='Have the Primary and Secondary Owners attended the mandatory "Introduction to SharePoint at Jones" training?' onChangeHandler={this.handleTextChange} >
+          <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is owner training completed?"} required error={this.state.formData.TrainingComplete.length === 0 || this.state.formData.TrainingComplete === "No"} helpText='Have the Primary and Secondary Owners attended the mandatory "Introduction to SharePoint at Jones" training?' onChangeHandler={this.handleTextChange} >
             <MenuItem value="No">No</MenuItem>
             <MenuItem value="Yes">Yes</MenuItem>
           </SingleSelectTemplate>
@@ -344,10 +356,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
           {/* <Paper> */}
             <FullFormLoader active={this.state.loading} complete={this.state.isSubmitted} warning={!this.state.isConfigured} successMessage={this.props.successMessage} fullScreen warningMessage="The webpart is not configured" />
 
-            {/* <div> */}
-            {/* <div> */}
             <div className={styles.row}>
-              {/* <div> */}
               <div className={styles.column}>
                 <span className={styles.title}>SharePoint Team Site Request</span>
 
