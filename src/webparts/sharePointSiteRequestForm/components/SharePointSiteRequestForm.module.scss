@@ -23,12 +23,12 @@
 
   .title {
     @include ms-font-xl;
-    @include ms-fontColor-white;
+    color: "#333";
   }
 
   .subTitle {
     @include ms-font-l;
-    @include ms-fontColor-white;
+    color: "#333";
   }
 
   .description {
