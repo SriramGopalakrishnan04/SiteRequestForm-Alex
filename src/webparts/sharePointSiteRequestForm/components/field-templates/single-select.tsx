@@ -8,6 +8,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
+import Divider from '@material-ui/core/Divider';
 
 import MultilineTextField from './multi-line-text-field';
 
@@ -90,7 +91,7 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
         const showTextField = this.state.inputValue === "Other" ? true : false;
 
         const classes = {
-            root:"nnn",
+            root: "nnn",
             formControl: 'nnn',
             selectEmpty: 'nnn',
 
@@ -98,8 +99,8 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
 
         return (
             <React.Fragment>
-                
-                
+
+
                 <FormControl fullWidth variant="outlined" className={classes.formControl} style={singleSelectStyles} error={this.props.error} required={this.props.required}>
                     <InputLabel
                         ref={ref => {
@@ -119,6 +120,10 @@ class SingleSelectTemplate extends React.Component<SingleSelectTemplateProps> {
                             />
                         }
                     >
+                        <MenuItem disabled value="">
+                            <em><b>{this.props.placeHolder}</b></em>
+                        </MenuItem>
+                        <Divider />
                         {this.props.children}
                     </Select>
                     {this.props.helpText && <FormHelperText>{this.props.helpText}</FormHelperText>}
