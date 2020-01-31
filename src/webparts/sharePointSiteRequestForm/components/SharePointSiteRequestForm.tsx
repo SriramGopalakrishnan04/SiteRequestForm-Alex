@@ -186,7 +186,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     this.setState({
       errorMessage: "Owners need to complete training before requesting a site.",
       formState: "trainingNeeded"
-    })
+    });
   }
 
   private setMissingDataMessage() {
