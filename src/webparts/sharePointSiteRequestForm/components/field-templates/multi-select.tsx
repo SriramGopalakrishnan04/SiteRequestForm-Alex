@@ -11,6 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
+import Divider from '@material-ui/core/Divider';
 
 import MultilineTextField from './multi-line-text-field';
 
@@ -99,17 +100,17 @@ class MultipleSelect extends React.Component<Props, State> {
   public handleOtherTextChange = (name, value) => {
     let stateVal = [...this.state.value];
     // Check for the other option
-    
+
     if (stateVal.indexOf("Other") !== -1) {
       stateVal[stateVal.indexOf("Other")] = `Other-${value}`;
     }
-    
+
     this.setState({
-        otherText: value
+      otherText: value
     }, () => {
-        this.props.onChangeHandler(this.props.name, stateVal.toString());
+      this.props.onChangeHandler(this.props.name, stateVal.toString());
     });
-}
+  }
 
   public handleChange = event => {
     this.setState({ value: event.target.value });
@@ -153,7 +154,7 @@ class MultipleSelect extends React.Component<Props, State> {
             multiple
             value={this.state.value}
             onChange={this.handleChange}
-            SelectDisplayProps={{style: (this.state.value.length !== 0 ? {paddingTop: 10, paddingBottom: 10} : {})}} // This is a hack so that the height matches the other selects after a value is selected
+            SelectDisplayProps={{ style: (this.state.value.length !== 0 ? { paddingTop: 10, paddingBottom: 10 } : {}) }} // This is a hack so that the height matches the other selects after a value is selected
             input={
               <OutlinedInput
                 labelWidth={this.state.labelWidth}
@@ -169,6 +170,10 @@ class MultipleSelect extends React.Component<Props, State> {
             )}
             MenuProps={MenuProps}
           >
+            <MenuItem disabled value="">
+              <em><b>{this.props.placeHolder}</b></em>
+            </MenuItem>
+            <Divider />
             {this.props.options.map(option => (
               <MenuItem key={option.value} value={option.value}>
                 <Checkbox checked={this.state.value.indexOf(option.value) > -1} />
