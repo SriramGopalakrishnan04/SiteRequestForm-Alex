@@ -205,7 +205,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   }
 
   private validateFormData() {
-    const isMissingRequiredData = this.state.formData["TeamName"].length === 0 || this.state.formData["PrimaryOwner"].length !== 1 || this.state.formData["SecondaryOwner"].length !== 1 || this.state.formData.CurrentContent.length === 0 || this.state.formData.DocumentTypes.length === 0 || this.state.formData.FirmDivision.length === 0 || this.state.formData.RequireMigration.length === 0 || this.state.formData.SiteAccess.length === 0 || this.state.formData.SiteLife.length === 0 || this.state.formData.SitePurpose.length === 0 || this.state.formData.TrainingComplete.length === 0;
+    const isMissingRequiredData = this.state.formData["TeamName"].length === 0 || this.state.formData["PrimaryOwner"].length !== 1 || this.state.formData["SecondaryOwner"].length !== 1 || this.state.formData.CurrentContent.length === 0 || this.state.formData.DocumentTypes.length === 0 || this.state.formData.FirmDivision.length === 0 || this.state.formData.SiteAccess.length === 0 || this.state.formData.SiteLife.length === 0 || this.state.formData.SitePurpose.length === 0 || this.state.formData.TrainingComplete.length === 0;
     const hasMatchingPrimarySecondary = (this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]));
     const isTrainingCompleted = this.state.formData["TrainingComplete"] === "Yes";
     if (isMissingRequiredData) {
@@ -301,10 +301,10 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
           <MultilineTextTemplate name="CurrentContent" label="Where does your content currently reside and how is it organized?" required error={this.state.formData.CurrentContent.length === 0} onChangeHandler={this.handleTextChange} />
 
-          <SingleSelectTemplate name="RequireMigration" label={"Require Migration"} placeHolder={"Will you require content be migrated?"} required error={this.state.formData.RequireMigration.length === 0} onChangeHandler={this.handleTextChange} >
+          {/*<SingleSelectTemplate name="RequireMigration" label={"Require Migration"} placeHolder={"Will you require content be migrated?"} required error={this.state.formData.RequireMigration.length === 0} onChangeHandler={this.handleTextChange} >
             <MenuItem value="No">No</MenuItem>
             <MenuItem value="Yes">Yes</MenuItem>
-          </SingleSelectTemplate>
+          </SingleSelectTemplate> */}
 
           <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is owner training completed?"} required error={this.state.formData.TrainingComplete.length === 0 || this.state.formData.TrainingComplete === "No"} helpText='Have the Primary and Secondary Owners attended the mandatory "Introduction to SharePoint at Jones" training?' onChangeHandler={this.handleTextChange} >
             <MenuItem value="No">No</MenuItem>
