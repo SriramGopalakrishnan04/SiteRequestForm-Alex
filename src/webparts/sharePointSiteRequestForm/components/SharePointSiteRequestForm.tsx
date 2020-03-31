@@ -120,10 +120,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
     this.setState({
       formData: { ...this.state.formData, [fieldName]: fieldValue}
     });
-    handleUrl: function(fieldValue)
-    {
-      
-    }
+    
   }
 
   public handleTextChange = (fieldName: string, fieldValue: string) => {
@@ -267,9 +264,9 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         {this.state.isSubmitted && <div style={successMessageCss}>Your site request has been submitted.</div>}
         {!this.state.isSubmitted && <br />}
         <React.Fragment>
-          <TextFieldTemplate name="TeamName" label="Desired Site Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTitleTextChange} required />
-
-          <ReadOnlyFieldTemplate name="SampleURL" placeHolder=""/>
+          <TextFieldTemplate name="TeamName" label="Desired Site Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
+          
+          <ReadOnlyFieldTemplate name="PreviewURL" value= {this.state.formData.TeamName} />
 
           <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
 

@@ -6,20 +6,25 @@ interface ReadOnlyFieldTemplateProps {
 }
 
 const initialState = {
-    inputValue: ''
+    URLPreview: 'default'
 };
-
+const previewUrlCss = {
+  // width: '80%',
+  // minWidth: '200px',
+  marginLeft: '12px',
+  marginRight: '12px'
+};
 type State = Readonly<typeof initialState>;
 
 class ReadOnlyFieldTemplate extends React.Component<ReadOnlyFieldTemplateProps> {
     public readonly state: State = initialState;
-    
-  updateContent = () => {
-      this.setState({ inputValue: "Updated Content!"});
-  }
     public render() {
+      let previewUrl: string;
+      if(this.props.value.length>0){
+        previewUrl="Preview of the URL: https://ejprod.sharepoint.com/sites/"+this.props.value.replace(/[^a-zA-Z0-9]/g, '');
+      }
         return (
-           <div>{this.state.inputValue}</div>
+           <div style={previewUrlCss}>{previewUrl}</div>
         );
     }
 }
