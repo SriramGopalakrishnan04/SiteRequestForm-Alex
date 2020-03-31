@@ -12,6 +12,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 
 import TextFieldTemplate from './field-templates/text-field';
+import ReadOnlyFieldTemplate from './field-templates/readonly-field';
 import PeoplePickerTemplate from './field-templates/people-picker-template';
 import SingleSelectTemplate from './field-templates/single-select';
 import MultiSelectTemplate from './field-templates/multi-select';
@@ -112,6 +113,16 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
       return buttonSuccessCss;
     } else {
       return buttonBaseCss;
+    }
+  }
+
+  public handleTitleTextChange = (fieldName: string, fieldValue: string) => {
+    this.setState({
+      formData: { ...this.state.formData, [fieldName]: fieldValue}
+    });
+    handleUrl: function(fieldValue)
+    {
+      
     }
   }
 
@@ -256,7 +267,9 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
         {this.state.isSubmitted && <div style={successMessageCss}>Your site request has been submitted.</div>}
         {!this.state.isSubmitted && <br />}
         <React.Fragment>
-          <TextFieldTemplate name="TeamName" label="Desired Site Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
+          <TextFieldTemplate name="TeamName" label="Desired Site Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTitleTextChange} required />
+
+          <ReadOnlyFieldTemplate name="SampleURL" placeHolder=""/>
 
           <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
 
