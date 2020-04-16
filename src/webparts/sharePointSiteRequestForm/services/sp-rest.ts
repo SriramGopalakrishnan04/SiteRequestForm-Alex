@@ -54,10 +54,7 @@ function createSiteRequest(webPartContext: WebPartContext, formData: any, listNa
     return new Promise((resolve, reject) => {
         sp.web.lists.getByTitle(listName).items.add({
             Title: formData['Title'],
-<<<<<<< HEAD
             PreviewURL: formData['PreviewURL'],
-=======
->>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
             SitePurpose: formData['SitePurpose'],
             SiteLife: formData['SiteLife'],
             SiteAccess: formData['SiteAccess'],
@@ -171,11 +168,8 @@ function getListItemEntityTypeName(siteUrl: string, spHttpClient: SPHttpClient, 
     });
   }
 
-<<<<<<< HEAD
   
 
-=======
->>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
 
 export {
     getListItemsByUserId,
