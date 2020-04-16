@@ -25,7 +25,10 @@ import { ISharePointSiteRequestFormProps } from './ISharePointSiteRequestFormPro
 
 import { createSiteRequest, getListItemEntityTypeName } from '../services/sp-rest';
 
+<<<<<<< HEAD
 let previewUrl = "";
+=======
+>>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
 const blueTheme = createMuiTheme({
   palette: {
     primary: amber,
@@ -87,7 +90,10 @@ const initialState = {
   formState: "missingData",
   formData: {
     "TeamName": "",
+<<<<<<< HEAD
     "PreviewURL":"",
+=======
+>>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
     "PrimaryOwner": [],
     "SecondaryOwner": [],
     "AdditionalOwners": [],
@@ -119,6 +125,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   }
 
   public handleTitleTextChange = (fieldName: string, fieldValue: string) => {
+<<<<<<< HEAD
     if(fieldValue.length>0)
     {
         let tenantUrl=this.props.webpartContext.pageContext.site.absoluteUrl;
@@ -132,6 +139,12 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
       formData: { ...this.state.formData, [fieldName]: fieldValue,["PreviewURL"]: previewUrl}
     });
      
+=======
+    this.setState({
+      formData: { ...this.state.formData, [fieldName]: fieldValue}
+    });
+    
+>>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
   }
 
   public handleTextChange = (fieldName: string, fieldValue: string) => {
@@ -243,7 +256,11 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
       this.clearErrorState();
     }
   }
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
   private handleRequestButtonClick() {
     // Set the state as loading before trying to create the request.
 
@@ -269,19 +286,32 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   }
 
   private renderFormBody() {
+<<<<<<< HEAD
     
     
     return (
       
+=======
+    return (
+
+>>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
       <form style={containerCss} noValidate autoComplete="off">
         {this.state.isSubmitted && <div style={successMessageCss}>Your site request has been submitted.</div>}
         {!this.state.isSubmitted && <br />}
         <React.Fragment>
+<<<<<<< HEAD
           <TextFieldTemplate name="TeamName" label="Desired Site Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTitleTextChange} required />
           
           <ReadOnlyFieldTemplate name="PreviewURL" value={"Preview of the URL: "+previewUrl} />
 
           <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number. Must be a Team Leader (or above) or Project Leader." name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
+=======
+          <TextFieldTemplate name="TeamName" label="Desired Site Name" placeHolder="E.G. IS Web Content Management" onChangeHandler={this.handleTextChange} required />
+          
+          <ReadOnlyFieldTemplate name="PreviewURL" value= {this.state.formData.TeamName} />
+
+          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
+>>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
 
           <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="SecondaryOwner" label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
 
@@ -329,7 +359,11 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
             <MenuItem value="Yes">Yes</MenuItem>
           </SingleSelectTemplate> */}
 
+<<<<<<< HEAD
           <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is the required SharePoint Site Owner Overview training completed?"} required error={this.state.formData.TrainingComplete.length === 0 || this.state.formData.TrainingComplete === "No"} helpText='Primary owner must complete the SharePoint Site Owner Overview training through the Learning site before requesting' onChangeHandler={this.handleTextChange} >
+=======
+          <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is owner training completed?"} required error={this.state.formData.TrainingComplete.length === 0 || this.state.formData.TrainingComplete === "No"} helpText='Have the Primary and Secondary Owners attended the mandatory "Introduction to SharePoint at Jones" training?' onChangeHandler={this.handleTextChange} >
+>>>>>>> 16cc64ee875f3fa6f5dcb1c50ad97d159a01b07c
             <MenuItem value="No">No</MenuItem>
             <MenuItem value="Yes">Yes</MenuItem>
           </SingleSelectTemplate>
