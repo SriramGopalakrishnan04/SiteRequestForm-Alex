@@ -131,8 +131,8 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
             ? []
             : this.state.peopleSuggestions.filter(suggestion => {
                 // determine if we already have 5 suggestions or the current suggestion matches the search input.
-                const keep = count < 5 && (suggestion.Description.slice(0, inputLength).toLowerCase() === inputValue || suggestion.DisplayText.slice(0, inputLength).toLowerCase() === inputValue || suggestion.Key.slice(0, inputLength).toLowerCase() === inputValue);
-
+                const keep = count < 5 && (suggestion.EntityData.Title.length > 0 && (suggestion.Description.slice(0, inputLength).toLowerCase() === inputValue || suggestion.DisplayText.slice(0, inputLength).toLowerCase() === inputValue || suggestion.Key.slice(0, inputLength).toLowerCase() === inputValue));
+                
                 if (keep) {
                     count += 1;
                 }
@@ -162,6 +162,7 @@ class DownshiftMultiple extends React.Component<{ required?: boolean; singleValu
                     let pplResults = JSON.parse(res.value);
                     this.setState({
                         peopleSuggestions: pplResults
+                        
                     });
                 });
             }, 250);
