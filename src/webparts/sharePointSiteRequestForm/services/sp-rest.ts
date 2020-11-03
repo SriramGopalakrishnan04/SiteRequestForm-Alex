@@ -55,7 +55,7 @@ function createSiteRequest(webPartContext: WebPartContext, formData: any, listNa
         sp.web.lists.getByTitle(listName).items.add({
             Title: formData['Title'],
             PreviewURL: formData['PreviewURL'],
-            SitePurpose: formData['SitePurpose'],
+            SitePurpose: formData['SiteDescription'],
             SiteLife: formData['SiteLife'],
             SiteAccess: formData['SiteAccess'],
             DocumentTypes: formData['DocumentTypes'],

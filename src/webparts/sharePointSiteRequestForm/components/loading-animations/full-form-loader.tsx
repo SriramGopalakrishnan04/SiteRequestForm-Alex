@@ -7,6 +7,7 @@ import Fade from '@material-ui/core/Fade';
 import Zoom from '@material-ui/core/Zoom';
 import green from '@material-ui/core/colors/green';
 import red from '@material-ui/core/colors/red';
+import grey from '@material-ui/core/colors/grey';
 
 let isDismissed = false;
 
@@ -30,7 +31,8 @@ const fullScreenContainerCompleteCss = {
     top: 0,
     left: 0,
     display: 'flex',
-    background: green[500],
+    /*background: green[500],*/
+    background: grey[500],
     opacity: 1,
     transition: 'opacity 0.3s ease 0s, background 0.3s ease 0s',
     flexDirection: 'column',
@@ -86,7 +88,8 @@ const fullFormContainerCompleteCss = {
     position: 'absolute',
     zIndex: 99,
     display: 'flex',
-    background: green[500],
+    /*background: green[500],*/
+    background: grey[500],
     opacity: 1,
     transition: 'opacity 0.3s ease 0s, background 0.3s ease 0s',
     flexDirection: 'column',

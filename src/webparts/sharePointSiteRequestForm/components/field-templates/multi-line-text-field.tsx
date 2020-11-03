@@ -16,7 +16,14 @@ const styles = (theme: Theme) =>
     },
     menu: {
       width: 200,
+    },    
+    input: {     
+    },  
+    helpText: {
+      color:'rgba(0, 0, 0, 0.54) !important'
     },
+    
+
   });
 
 export interface Props extends WithStyles<typeof styles> {
@@ -24,6 +31,7 @@ export interface Props extends WithStyles<typeof styles> {
   name: string;
   error?: boolean;
   required?: boolean;
+  placeHolder?: string;
   onChangeHandler: (fieldName: string, fieldValue: string) => void;
 }
 
@@ -58,11 +66,18 @@ class TextFields extends React.Component<Props> {
           error={this.props.error}
           required={this.props.required}
           label={this.props.label}
-          placeholder=""
           multiline
           fullWidth
+         helperText={this.props.placeHolder}
           variant="outlined"
+          InputProps={{
+            classes: { input: classes.input},
+          }}
+          
           className={classes.textField}
+          FormHelperTextProps={{
+            className:classes.helpText,
+          }}
           onChange={(evt) => {
             this.props.onChangeHandler(this.props.name, evt.target.value);
             // this.setState({inputValue: evt.target.value});

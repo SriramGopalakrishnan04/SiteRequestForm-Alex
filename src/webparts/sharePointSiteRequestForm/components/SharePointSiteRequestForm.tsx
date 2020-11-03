@@ -88,11 +88,11 @@ const initialState = {
   formData: {
     "TeamName": "",
     "PreviewURL":"",
+    "SiteDescription":"",
     "PrimaryOwner": [],
     "SecondaryOwner": [],
     "AdditionalOwners": [],
     "Members": [],
-    "SitePurpose": "",
     "SiteAccess": "",
     "SiteLife": "",
     "DocumentTypes": "",
@@ -224,7 +224,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
   }
 
   private validateFormData() {
-    const isMissingRequiredData = this.state.formData["TeamName"].length === 0 || this.state.formData["PrimaryOwner"].length !== 1 || this.state.formData["SecondaryOwner"].length !== 1 || this.state.formData.CurrentContent.length === 0 || this.state.formData.DocumentTypes.length === 0 || this.state.formData.FirmDivision.length === 0 || this.state.formData.SiteAccess.length === 0 || this.state.formData.SiteLife.length === 0 || this.state.formData.SitePurpose.length === 0 || this.state.formData.TrainingComplete.length === 0;
+    const isMissingRequiredData = this.state.formData["TeamName"].length === 0 || this.state.formData["PrimaryOwner"].length !== 1 || this.state.formData["SecondaryOwner"].length !== 1 || this.state.formData.CurrentContent.length === 0 || this.state.formData.DocumentTypes.length === 0 || this.state.formData.FirmDivision.length === 0 || this.state.formData.SiteAccess.length === 0 || this.state.formData.SiteLife.length === 0 || this.state.formData.TrainingComplete.length === 0||this.state.formData.SiteDescription.length === 0;
     const hasMatchingPrimarySecondary = (this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]));
     const isTrainingCompleted = this.state.formData["TrainingComplete"] === "Yes";
     if (isMissingRequiredData) {
@@ -281,15 +281,18 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
           
           <ReadOnlyFieldTemplate name="PreviewURL" value={"Preview of the URL: "+previewUrl} />
 
+          {/*<TextFieldTemplate name="SiteDescription" label="What is your Site Description?" placeHolder="Be sure to add an accurate description of the Team's purpose in the description field. Remember the entire organization is using Teams so descriptions are critical" onChangeHandler={this.handleTextChange} multiline required />*/}
+          <MultilineTextTemplate name="SiteDescription" label="What is your Site Description?" required error={this.state.formData.SiteDescription.length === 0} onChangeHandler={this.handleTextChange} placeHolder="Be sure to add an accurate description of the Team's purpose in the description field. Remember the entire organization is using Teams so descriptions are critical"/>
+
           <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number. Must be a Team Leader (or above) or Project Leader." name="PrimaryOwner" label={"Primary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
 
           <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number." name="SecondaryOwner" label={"Secondary Owner"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} required singleValue error={(this.state.formData["PrimaryOwner"].length && this.state.formData["SecondaryOwner"].length && (this.state.formData["PrimaryOwner"][0]["Key"] === this.state.formData["SecondaryOwner"][0]["Key"]))} />
 
           <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number. Optional: Owners can add new owners after the site is created." name="AdditionalOwners" label={"Additional Owners"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
-          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number. Optional: Owners can add new members after the site is created." name="Members" label={"Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
+          <PeoplePickerTemplate helpText="Search by 'LastName,FirstName' or J/P Number. Optional: Owners can add new members after the site is created." name="Members" label={"Invite Members"} wpContext={this.props.webpartContext} addFieldError={this.handleAddFieldError} removeFieldError={this.handlerRemoveFieldError} onChangeHandler={this.handleUserFieldChange} />
 
-          <MultilineTextTemplate name="SitePurpose" label="What is the purpose of the site?" onChangeHandler={this.handleTextChange} required error={this.state.formData.SitePurpose.length === 0} />
+          {/*<MultilineTextTemplate name="SitePurpose" label="What is the purpose of the site?" onChangeHandler={this.handleTextChange} required error={this.state.formData.SitePurpose.length === 0} />*/}
 
           <MultiSelectTemplate required options={
             [
@@ -302,7 +305,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
               { value: "Other", placeHolder: "Other" },
             ]
           }
-            name="SiteAccess" label={"Access"} placeHolder={"Who will access your site and it's associated content?"} error={this.state.formData.SiteAccess.length === 0} onChangeHandler={this.handleTextChange}
+            name="SiteAccess" label={"Access"} placeHolder={"Who will access your site and its associated content?"} error={this.state.formData.SiteAccess.length === 0} onChangeHandler={this.handleTextChange}
           />
 
           <SingleSelectTemplate name="SiteLife" label={"Site Life"} placeHolder={"How long will you be using the site?"} required error={this.state.formData.SiteLife.length === 0} onChangeHandler={this.handleTextChange} >
@@ -329,7 +332,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
             <MenuItem value="Yes">Yes</MenuItem>
           </SingleSelectTemplate> */}
 
-          <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is the required SharePoint Site Owner Overview training completed?"} required error={this.state.formData.TrainingComplete.length === 0 || this.state.formData.TrainingComplete === "No"} helpText='Primary owner must complete the SharePoint Site Owner Overview training through the Learning site before requesting' onChangeHandler={this.handleTextChange} >
+          <SingleSelectTemplate name="TrainingComplete" label={"Training Complete"} placeHolder={"Is the required Teams Site Owner Overview training completed?"} required error={this.state.formData.TrainingComplete.length === 0 || this.state.formData.TrainingComplete === "No"} helpText='Primary owner must complete the Teams Site Owner Overview training through the Learning site before requesting' onChangeHandler={this.handleTextChange} >
             <MenuItem value="No">No</MenuItem>
             <MenuItem value="Yes">Yes</MenuItem>
           </SingleSelectTemplate>
@@ -381,7 +384,7 @@ export default class SharePointSiteRequestForm extends React.Component<ISharePoi
 
             <div className={styles.row}>
               <div className={styles.column}>
-                <span className={styles.title}>SharePoint Team Site Request</span>
+                <span className={styles.title}>Microsoft Teams Site Request</span>
 
                 <p className={styles.description}>{this.state.errorMessage}&nbsp;</p>
 
