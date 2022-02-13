@@ -57,7 +57,7 @@
     "@types/chai": "3.4.34",
     "@types/material-ui": "^0.21.6",
     "@types/mocha": "2.2.38",
-    "ajv": "~5.2.2",
+    "ajv": "~6.12.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.6",
     "babel-plugin-transform-class-properties": "^6.24.1",
